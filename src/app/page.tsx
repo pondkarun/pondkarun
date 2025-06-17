@@ -238,7 +238,7 @@ const App: React.FC = () => {
         "/image/intreehome/Screenshot 2568-06-16 at 10.37.49.png",
         "/image/intreehome/Screenshot 2568-06-16 at 10.38.08.png",
       ],
-      liveUrl: undefined,
+      liveUrl: "https://intreehome.com",
       githubUrl: undefined,
     },
 
@@ -617,22 +617,20 @@ const App: React.FC = () => {
             </TechGrid>
             <TechLogos>
               {[
-                "Next.js",
-                "React",
-                "Node.js",
-                "TypeScript",
-                "GraphQL",
-                "PostgreSQL",
-                "AWS",
-                "Docker",
+                { name: "Next.js", icon: "fas fa-code" },
+                { name: "React", icon: "fab fa-react" },
+                { name: "Node.js", icon: "fab fa-node-js" },
+                { name: "TypeScript", icon: "fas fa-code" },
+                { name: "GraphQL", icon: "fas fa-database" },
+                { name: "PostgreSQL", icon: "fas fa-database" },
+                { name: "AWS", icon: "fab fa-aws" },
+                { name: "Docker", icon: "fab fa-docker" },
               ].map((tech) => (
-                <TechLogo key={tech}>
+                <TechLogo key={tech.name}>
                   <div>
-                    <i
-                      className={`fab fa-${tech.toLowerCase().replace(".js", "").replace("type", "")}`}
-                    ></i>
+                    <i className={tech.icon}></i>
                   </div>
-                  <p>{tech}</p>
+                  <p>{tech.name}</p>
                 </TechLogo>
               ))}
             </TechLogos>
@@ -659,28 +657,40 @@ const App: React.FC = () => {
               </ContactEmail>
               <ContactSocials>
                 <Tooltip title="GitHub">
-                  <Button
-                    type="text"
-                    shape="circle"
-                    size="large"
-                    icon={<GithubOutlined />}
-                    style={{
-                      color: "#9ca3af",
-                      fontSize: "1.5rem"
-                    }}
-                  />
+                  <a
+                    href="https://github.com/pondkarun"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button
+                      type="text"
+                      shape="circle"
+                      size="large"
+                      icon={<GithubOutlined />}
+                      style={{
+                        color: "#9ca3af",
+                        fontSize: "1.5rem"
+                      }}
+                    />
+                  </a>
                 </Tooltip>
                 <Tooltip title="LinkedIn">
-                  <Button
-                    type="text"
-                    shape="circle"
-                    size="large"
-                    icon={<LinkedinOutlined />}
-                    style={{
-                      color: "#9ca3af",
-                      fontSize: "1.5rem"
-                    }}
-                  />
+                  <a
+                    href="https://www.linkedin.com/in/karun-kalantabutra-8b25251b1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button
+                      type="text"
+                      shape="circle"
+                      size="large"
+                      icon={<LinkedinOutlined />}
+                      style={{
+                        color: "#9ca3af",
+                        fontSize: "1.5rem"
+                      }}
+                    />
+                  </a>
                 </Tooltip>
               </ContactSocials>
             </ContactContent>
