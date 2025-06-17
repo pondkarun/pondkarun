@@ -206,8 +206,8 @@ const App: React.FC = () => {
       githubUrl: undefined,
     },
     {
-      title: "Daichi Mango Orchard Website",
-      description: "เว็บไซต์นำเสนอพันธุ์มะม่วงคุณภาพจากสวน Daichi Mango ทางภาคเหนือของประเทศไทย แสดงข้อมูลสินค้า เช่น น้ำหนัก ค่าความหวาน อายุการเก็บรักษา และช่วงฤดูกาลที่จำหน่าย เหมาะสำหรับผู้นำเข้า ร้านค้า และผู้บริโภค พร้อมผลิตภัณฑ์มะม่วงสด อบแห้ง และแช่แข็ง รวมถึงข้อมูลติดต่อครบถ้วน รองรับการส่งออก",
+      title: "Daichi Mango เว็บไซต์นำเสนอพันธุ์มะม่วงคุณภาพจากสวน",
+      description: "Daichi Mango ทางภาคเหนือของประเทศไทย แสดงข้อมูลสินค้า เช่น น้ำหนัก ค่าความหวาน อายุการเก็บรักษา และช่วงฤดูกาลที่จำหน่าย เหมาะสำหรับผู้นำเข้า ร้านค้า และผู้บริโภค พร้อมผลิตภัณฑ์มะม่วงสด อบแห้ง และแช่แข็ง รวมถึงข้อมูลติดต่อครบถ้วน รองรับการส่งออก",
       tags: ["Next.JS", "React", "TailwindCSS", "TypeScript", "Ant Design", "Responsive"],
       image:
         "/image/daichi_mango/Screenshot 2568-06-16 at 10.50.37.png",
@@ -219,6 +219,24 @@ const App: React.FC = () => {
         "/image/daichi_mango/Screenshot 2568-06-16 at 10.51.32.png",
         "/image/daichi_mango/Screenshot 2568-06-16 at 10.52.16.png",
         "/image/daichi_mango/Screenshot 2568-06-16 at 10.52.26.png",
+      ],
+      liveUrl: undefined,
+      githubUrl: undefined,
+    },
+    {
+      title: "INTree Home - บริการดูแลสวนและตัดต้นไม้อย่างมืออาชีพ",
+      description: "INTree คือบริษัทบริการดูแลสวนและตัดต้นไม้ในกรุงเทพฯ ที่ให้บริการครบวงจร เช่น ดูแลสวนรายเดือน, ตัดแต่งต้นไม้ใหญ่, เคลียร์พื้นที่ และจัดหาคนสวนประจำ โดยทีมงานมืออาชีพ พร้อมอุปกรณ์ครบครัน เว็บไซต์นำเสนอรายละเอียดบริการ ภาพก่อน-หลัง และช่องทางติดต่อผ่าน Line, Facebook และ Tiktok",
+      tags: ["Next.JS", "React", "TailwindCSS", "TypeScript", "Ant Design", "Responsive"],
+      image:
+        "/image/intreehome/Screenshot 2568-06-16 at 10.32.37.png",
+      images: [
+        "/image/intreehome/Screenshot 2568-06-16 at 10.32.37.png",
+        "/image/intreehome/Screenshot 2568-06-16 at 10.33.13.png",
+        "/image/intreehome/Screenshot 2568-06-16 at 10.33.24.png",
+        "/image/intreehome/Screenshot 2568-06-16 at 10.37.14.png",
+        "/image/intreehome/Screenshot 2568-06-16 at 10.37.39.png",
+        "/image/intreehome/Screenshot 2568-06-16 at 10.37.49.png",
+        "/image/intreehome/Screenshot 2568-06-16 at 10.38.08.png",
       ],
       liveUrl: undefined,
       githubUrl: undefined,
