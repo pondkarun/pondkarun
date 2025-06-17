@@ -1,113 +1,1245 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+// The exported code uses styled-components instead of Tailwind CSS
+import React, { useState, useEffect, useRef } from "react";
+import styled, { keyframes, createGlobalStyle } from "styled-components";
+import { Typography, Button, Divider, Tag, Tooltip } from "antd";
+import {
+  MailOutlined,
+  GithubOutlined,
+  LinkedinOutlined,
+  ArrowUpOutlined,
+} from "@ant-design/icons";
+import * as echarts from "echarts";
+const { Text } = Typography;
+
+// Global Styles
+const GlobalStyle = createGlobalStyle`
+  body {
+    min-height: 1024px;
+    background-color: #0A192F;
+  }
+  
+  .custom-progress .ant-progress-bg {
+    height: 8px !important;
+    border-radius: 4px;
+  }
+  
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+`;
+
+// Animations
+const pulse = keyframes`
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+`;
+
+// Styled Components
+const Container = styled.div`
+  min-height: 100vh;
+  background-color: #0A192F;
+  color: #d1d5db;
+  font-family: system-ui, -apple-system, sans-serif;
+`;
+
+const Header = styled.header`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: rgba(10, 25, 47, 0.9);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+  border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+`;
+
+const HeaderContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const Logo = styled.div`
+  color: #64FFDA;
+  font-weight: bold;
+  font-size: 1.5rem;
+  
+  span {
+    color: #d1d5db;
+  }
+`;
+
+const Nav = styled.nav`
+  display: none;
+  gap: 2rem;
+  
+  @media (min-width: 768px) {
+    display: flex;
+  }
+`;
+
+const NavButton = styled.button<{ $isActive: boolean }>`
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  white-space: nowrap;
+  border: none;
+  background: none;
+  color: ${props => props.$isActive ? '#64FFDA' : '#9ca3af'};
+  transition: color 0.3s;
+  
+  &:hover {
+    color: ${props => props.$isActive ? '#64FFDA' : '#e5e7eb'};
+  }
+  
+  span {
+    color: #64FFDA;
+    margin-right: 0.25rem;
+  }
+`;
+
+const MobileMenuButton = styled.button`
+  display: block;
+  color: #64FFDA;
+  cursor: pointer;
+  white-space: nowrap;
+  border: none;
+  background: none;
+  font-size: 1.25rem;
+  
+  @media (min-width: 768px) {
+    display: none;
+  }
+`;
+
+const MobileMenu = styled.div`
+  background-color: #112240;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+  
+  @media (min-width: 768px) {
+    display: none;
+  }
+`;
+
+const MobileMenuContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const HeroSection = styled.section`
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 5rem;
+  position: relative;
+  overflow: hidden;
+`;
+
+const HeroBackground = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(10, 25, 47, 0.9);
+    z-index: 1;
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+`;
+
+const HeroContent = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  
+  > div {
+    max-width: 48rem;
+  }
+`;
+
+const HeroIntro = styled.div`
+  color: #64FFDA;
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+`;
+
+const HeroTitle = styled.h1`
+  font-size: 3rem;
+  font-weight: bold;
+  color: #f3f4f6;
+  margin-bottom: 1rem;
+  
+  @media (min-width: 768px) {
+    font-size: 4.5rem;
+  }
+`;
+
+const HeroSubtitle = styled.h2`
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #9ca3af;
+  margin-bottom: 1.5rem;
+  
+  @media (min-width: 768px) {
+    font-size: 3rem;
+  }
+`;
+
+const HeroDescription = styled.div`
+  height: 5rem;
+  
+  p {
+    font-size: 1.25rem;
+    color: #9ca3af;
+    margin-bottom: 2rem;
+    
+    span {
+      animation: ${pulse} 1s infinite;
+    }
+  }
+`;
+
+const Section = styled.section<{ $bg?: string }>`
+  padding: 5rem 0;
+  background-color: ${props => props.$bg || 'transparent'};
+  position: relative;
+`;
+
+const SectionContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+`;
+
+const SectionHeader = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 3rem;
+  
+  h2 {
+    font-size: 1.875rem;
+    font-weight: bold;
+    color: #f3f4f6;
+    
+    span {
+      color: #64FFDA;
+      margin-right: 0.5rem;
+    }
+  }
+`;
+
+const AboutContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: center;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    
+    > div:first-child {
+      width: 50%;
+    }
+    
+    > div:last-child {
+      width: 50%;
+    }
+  }
+`;
+
+const AboutText = styled.div`
+  p {
+    color: #9ca3af;
+    margin-bottom: 1.5rem;
+    font-size: 1.125rem;
+  }
+`;
+
+const AboutImage = styled.div`
+  display: flex;
+  justify-content: center;
+  
+  > div {
+    position: relative;
+    width: 20rem;
+    height: 20rem;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 2px solid #64FFDA;
+      border-radius: 0.375rem;
+      transform: translate(1.25rem, 1.25rem);
+    }
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      border-radius: 0.375rem;
+      z-index: 10;
+      position: relative;
+    }
+  }
+`;
+
+const SkillsGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+`;
+
+const SkillCard = styled.div`
+  background-color: #0A192F;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  h3 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #64FFDA;
+    margin-bottom: 1.5rem;
+  }
+`;
+
+const SkillTags = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+`;
+
+const ProjectsGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+`;
+
+const ProjectCard = styled.div`
+  background-color: #112240;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s;
+  
+  &:hover {
+    transform: translateY(-0.5rem);
+  }
+`;
+
+const ProjectImage = styled.div`
+  position: relative;
+  height: 14rem;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transition: transform 0.5s;
+  }
+  
+  &:hover img {
+    transform: scale(1.05);
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, #112240, transparent);
+    opacity: 0.7;
+  }
+`;
+
+const ProjectContent = styled.div`
+  padding: 1.5rem;
+  
+  h3 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #f3f4f6;
+    margin-bottom: 0.75rem;
+  }
+  
+  p {
+    color: #9ca3af;
+    margin-bottom: 1rem;
+  }
+`;
+
+const ProjectTags = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const ProjectButtons = styled.div`
+  display: flex;
+  gap: 1rem;
+`;
+
+const TechGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+`;
+
+const TechCategory = styled.div`
+  background-color: #0A192F;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  h3 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #64FFDA;
+    margin-bottom: 1.5rem;
+  }
+`;
+
+const TechItems = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+`;
+
+const TechItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  
+  i {
+    color: #64FFDA;
+    font-size: 0.875rem;
+  }
+  
+  span {
+    color: #d1d5db;
+  }
+`;
+
+const TechLogos = styled.div`
+  margin-top: 4rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  opacity: 0.7;
+`;
+
+const TechLogo = styled.div`
+  text-align: center;
+  transition: all 0.3s;
+  
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  
+  > div {
+    width: 4rem;
+    height: 4rem;
+    margin: 0 auto 0.5rem auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: #9ca3af;
+  }
+  
+  p {
+    color: #9ca3af;
+    font-size: 0.875rem;
+  }
+`;
+
+const ContactContent = styled.div`
+  text-align: center;
+  max-width: 48rem;
+  margin: 0 auto;
+  
+  p {
+    color: #9ca3af;
+    font-size: 1.125rem;
+    margin-bottom: 2.5rem;
+  }
+`;
+
+const ContactEmail = styled.div`
+  margin-bottom: 3rem;
+  
+  a {
+    font-size: 1.5rem;
+    color: #64FFDA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+    
+    .anticon {
+      margin-right: 0.5rem;
+    }
+  }
+`;
+
+const ContactSocials = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+`;
+
+const Footer = styled.footer`
+  padding: 1.5rem 0;
+  background-color: #0A192F;
+  border-top: 1px solid rgba(100, 255, 218, 0.1);
+  text-align: center;
+  
+  p {
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+`;
+
+const ScrollToTopButton = styled.button`
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background-color: rgba(100, 255, 218, 0.1);
+  color: #64FFDA;
+  padding: 0.75rem;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: rgba(100, 255, 218, 0.2);
+  }
+`;
+
+
+
+const App: React.FC = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const chartRef = useRef<HTMLDivElement>(null);
+  const sections = ["home", "about", "skills", "projects", "tech", "contact"];
+  // Typewriter effect for hero section
+  const [displayText, setDisplayText] = useState("");
+  const fullText = "Building innovative solutions with modern technologies";
+  const [currentIndex, setCurrentIndex] = useState(0);
+  useEffect(() => {
+    if (currentIndex < fullText.length) {
+      const timeout = setTimeout(() => {
+        setDisplayText((prev) => prev + fullText[currentIndex]);
+        setCurrentIndex(currentIndex + 1);
+      }, 100);
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, fullText]);
+  // Scroll to top button visibility
+  useEffect(() => {
+    const toggleVisibility = () => {
+      if (window.pageYOffset > 300) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+    window.addEventListener("scroll", toggleVisibility);
+    return () => window.removeEventListener("scroll", toggleVisibility);
+  }, []);
+  // Active section detection
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      sections.forEach((section) => {
+        const element = document.getElementById(section);
+        if (element) {
+          const offsetTop = element.offsetTop - 100;
+          const offsetBottom = offsetTop + element.offsetHeight;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
+            setActiveSection(section);
+          }
+        }
+      });
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+  // Initialize chart
+  useEffect(() => {
+    if (chartRef.current) {
+      const chart = echarts.init(chartRef.current);
+      const option = {
+        animation: false,
+        radar: {
+          indicator: [
+            { name: "Frontend", max: 100 },
+            { name: "Backend", max: 100 },
+            { name: "DevOps", max: 100 },
+            { name: "Cloud", max: 100 },
+            { name: "Architecture", max: 100 },
+            { name: "AI/ML", max: 100 },
+          ],
+          radius: 130,
+          splitNumber: 4,
+          axisName: {
+            color: "#64FFDA",
+            fontSize: 14,
+          },
+          splitLine: {
+            lineStyle: {
+              color: "rgba(100, 255, 218, 0.2)",
+            },
+          },
+          splitArea: {
+            show: false,
+          },
+          axisLine: {
+            lineStyle: {
+              color: "rgba(100, 255, 218, 0.3)",
+            },
+          },
+        },
+        series: [
+          {
+            name: "Skills",
+            type: "radar",
+            data: [
+              {
+                value: [90, 95, 85, 92, 88, 80],
+                name: "Skill Level",
+                areaStyle: {
+                  color: "rgba(100, 255, 218, 0.2)",
+                },
+                lineStyle: {
+                  color: "#64FFDA",
+                  width: 2,
+                },
+                itemStyle: {
+                  color: "#64FFDA",
+                },
+              },
+            ],
+          },
+        ],
+      };
+      chart.setOption(option);
+      const handleResize = () => {
+        chart.resize();
+      };
+      window.addEventListener("resize", handleResize);
+      return () => {
+        chart.dispose();
+        window.removeEventListener("resize", handleResize);
+      };
+    }
+  }, []);
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - 80,
+        behavior: "smooth",
+      });
+    }
+    setIsMenuOpen(false);
+  };
+  const skills = {
+    frontend: [
+      { name: "Next.js", level: 95 },
+      { name: "React", level: 95 },
+      { name: "TailwindCSS", level: 90 },
+      { name: "TypeScript", level: 85 },
+      { name: "GraphQL", level: 85 },
+    ],
+    backend: [
+      { name: "Node.js", level: 95 },
+      { name: "PostgreSQL", level: 90 },
+      { name: "Hasura", level: 90 },
+      { name: "Express", level: 85 },
+      { name: "MongoDB", level: 80 },
+    ],
+    devops: [
+      { name: "Docker", level: 90 },
+      { name: "Jenkins", level: 85 },
+      { name: "Kubernetes", level: 85 },
+      { name: "CI/CD", level: 85 },
+      { name: "Playwright", level: 80 },
+    ],
+    cloud: [
+      { name: "AWS EKS", level: 90 },
+      { name: "AWS Cognito", level: 90 },
+      { name: "DynamoDB", level: 85 },
+      { name: "S3", level: 90 },
+      { name: "Lambda", level: 85 },
+    ],
+  };
+  const projects = [
+    {
+      title: "AI-powered KYC Verification System",
+      description:
+        "A secure identity verification platform using OCR technology and facial recognition to streamline KYC processes for financial institutions.",
+      tags: ["AI", "OCR", "Face Recognition", "Next.js", "AWS"],
+      image:
+        "https://readdy.ai/api/search-image?query=A%20modern%20digital%20identity%20verification%20system%20interface%20with%20facial%20recognition%20and%20document%20scanning%20capabilities%2C%20showing%20a%20professional%20dashboard%20with%20security%20elements%20and%20biometric%20verification%20process%2C%20clean%20interface%20design%20with%20blue%20accents&width=600&height=400&seq=1&orientation=landscape",
+    },
+    {
+      title: "Affiliate Payment Gateway System",
+      description:
+        "A comprehensive payment processing platform for affiliate marketing networks with real-time tracking and automated commission calculations.",
+      tags: ["Payment Gateway", "Node.js", "PostgreSQL", "GraphQL", "Docker"],
+      image:
+        "https://readdy.ai/api/search-image?query=A%20sleek%20payment%20gateway%20dashboard%20showing%20transaction%20analytics%2C%20payment%20processing%20interface%2C%20and%20affiliate%20tracking%20metrics%20with%20financial%20data%20visualization%2C%20professional%20fintech%20interface%20with%20secure%20payment%20icons%20and%20charts&width=600&height=400&seq=2&orientation=landscape",
+    },
+    {
+      title: "AI-assisted Wedding Card Generator",
+      description:
+        "An innovative platform that leverages AI to generate personalized wedding invitations based on user preferences and design inputs.",
+      tags: ["AI", "Next.js", "TailwindCSS", "AWS Lambda", "GraphQL"],
+      image:
+        "https://readdy.ai/api/search-image?query=An%20elegant%20wedding%20invitation%20design%20tool%20showing%20customizable%20templates%2C%20AI%20recommendation%20system%2C%20and%20preview%20of%20beautiful%20wedding%20cards%20with%20floral%20patterns%2C%20professional%20design%20interface%20with%20typography%20options%20and%20color%20schemes&width=600&height=400&seq=3&orientation=landscape",
+    },
+    {
+      title: "HS Code Classification Tool",
+      description:
+        "An AI-powered solution for automating the classification of products into Harmonized System codes using Elasticsearch and machine learning algorithms.",
+      tags: ["AI", "Elasticsearch", "Node.js", "Machine Learning", "Docker"],
+      image:
+        "https://readdy.ai/api/search-image?query=A%20professional%20product%20classification%20interface%20showing%20AI-powered%20categorization%20system%20with%20search%20functionality%2C%20taxonomy%20hierarchy%2C%20and%20product%20code%20assignment%2C%20technical%20dashboard%20with%20data%20processing%20visualization%20and%20search%20results&width=600&height=400&seq=4&orientation=landscape",
+    },
+    {
+      title: "Chootday - Online Dress Rental Platform",
+      description:
+        "A modern e-commerce platform for dress rentals featuring inventory management, booking system, and secure payment processing.",
+      tags: ["E-commerce", "Next.js", "PostgreSQL", "AWS", "Hasura"],
+      image:
+        "https://readdy.ai/api/search-image?query=A%20stylish%20online%20dress%20rental%20platform%20showing%20elegant%20dresses%20on%20models%2C%20booking%20calendar%20interface%2C%20and%20fashion%20category%20filters%2C%20modern%20e-commerce%20design%20with%20product%20gallery%20and%20rental%20options%2C%20clean%20layout%20with%20fashion%20photography&width=600&height=400&seq=5&orientation=landscape",
+    },
+  ];
+  const techStack = [
+    {
+      category: "Frontend",
+      items: ["Next.js", "React", "TailwindCSS", "TypeScript", "GraphQL"],
+    },
+    {
+      category: "Backend",
+      items: ["Node.js", "Express", "PostgreSQL", "Hasura", "MongoDB"],
+    },
+    {
+      category: "DevOps",
+      items: ["Docker", "Jenkins", "Kubernetes", "CI/CD", "Playwright"],
+    },
+    {
+      category: "Cloud",
+      items: ["AWS EKS", "AWS Cognito", "DynamoDB", "S3", "Lambda"],
+    },
+  ];
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+    <>
+      <GlobalStyle />
+      <Container>
+        {/* Navigation */}
+        <Header>
+          <HeaderContainer>
+            <Logo>
+              P<span>.</span>
+            </Logo>
+            {/* Desktop Navigation */}
+            <Nav>
+              {sections.map((section, index) => (
+                <NavButton
+                  key={section}
+                  onClick={() => scrollToSection(section)}
+                  $isActive={activeSection === section}
+                >
+                  <span>0{index + 1}.</span>
+                  {section.charAt(0).toUpperCase() + section.slice(1)}
+                </NavButton>
+              ))}
+            </Nav>
+            {/* Mobile Navigation Toggle */}
+            <MobileMenuButton
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              <i
+                className={`fas ${isMenuOpen ? "fa-times" : "fa-bars"} text-xl`}
+              ></i>
+            </MobileMenuButton>
+          </HeaderContainer>
+          {/* Mobile Navigation Menu */}
+          {isMenuOpen && (
+            <MobileMenu>
+              <MobileMenuContainer>
+                {sections.map((section, index) => (
+                  <NavButton
+                    key={section}
+                    onClick={() => scrollToSection(section)}
+                    $isActive={activeSection === section}
+                  >
+                    <span>0{index + 1}.</span>
+                    {section.charAt(0).toUpperCase() + section.slice(1)}
+                  </NavButton>
+                ))}
+              </MobileMenuContainer>
+            </MobileMenu>
+          )}
+        </Header>
+        {/* Hero Section */}
+        <HeroSection>
+          <HeroBackground>
+            <img
+              src="https://readdy.ai/api/search-image?query=Abstract%20digital%20technology%20background%20with%20subtle%20blue%20and%20purple%20gradient%2C%20minimalist%20geometric%20patterns%20and%20soft%20glowing%20particles%2C%20perfect%20for%20a%20tech%20professional%20portfolio%20hero%20section%20with%20space%20for%20text%20on%20the%20left%20side%2C%20modern%20and%20sophisticated&width=1440&height=800&seq=6&orientation=landscape"
+              alt="Background"
             />
-          </a>
-        </div>
-      </div>
+          </HeroBackground>
+          <HeroContent>
+            <div>
+              <HeroIntro>Hi, my name is</HeroIntro>
+              <HeroTitle>Pondkarun.</HeroTitle>
+              <HeroSubtitle>Solutions Architect & Developer</HeroSubtitle>
+              <HeroDescription>
+                <p>
+                  {displayText}
+                  <span className="animate-pulse">|</span>
+                </p>
+              </HeroDescription>
+              <Button
+                type="primary"
+                size="large"
+                className="bg-transparent border-[#64FFDA] text-[#64FFDA] hover:bg-[#64FFDA]/10 cursor-pointer whitespace-nowrap !rounded-button"
+                onClick={() => scrollToSection("projects")}
+              >
+                View My Work
+              </Button>
+            </div>
+          </HeroContent>
+        </HeroSection>
+        {/* About Section */}
+        <Section id="about">
+          <SectionContainer>
+            <SectionHeader>
+              <h2>
+                <span>01.</span>About Me
+              </h2>
+              <Divider style={{ flexGrow: 1, minWidth: "100px", backgroundColor: "gray" }} />
+            </SectionHeader>
+            <AboutContent>
+              <AboutText>
+                <p>
+                  I&apos;m a passionate Solutions Architect and Developer with
+                  extensive experience in building
+                  <Text style={{ color: "#64FFDA" }}> Microservices</Text>,
+                  <Text style={{ color: "#64FFDA" }}> KYC systems</Text>,
+                  <Text style={{ color: "#64FFDA" }}>
+                    {" "}
+                    AI-integrated applications
+                  </Text>
+                  , and
+                  <Text style={{ color: "#64FFDA" }}> automation tools</Text>. My
+                  expertise spans across the full technology stack, allowing me to
+                  design and implement comprehensive solutions that address
+                  complex business challenges.
+                </p>
+                <p>
+                  I specialize in web and mobile development using modern
+                  technologies such as
+                  <Text style={{ color: "#64FFDA" }}> Next.js</Text>,
+                  <Text style={{ color: "#64FFDA" }}> Node.js</Text>,
+                  <Text style={{ color: "#64FFDA" }}> GraphQL</Text>,
+                  <Text style={{ color: "#64FFDA" }}> Hasura</Text>, and
+                  <Text style={{ color: "#64FFDA" }}> PostgreSQL</Text>. My cloud
+                  expertise centers around
+                  <Text style={{ color: "#64FFDA" }}> AWS</Text> services including
+                  EKS, Cognito, and DynamoDB.
+                </p>
+                <p>
+                  I&apos;m also proficient in DevOps practices, utilizing tools like
+                  <Text style={{ color: "#64FFDA" }}> Docker</Text>,
+                  <Text style={{ color: "#64FFDA" }}> Jenkins</Text>, and
+                  <Text style={{ color: "#64FFDA" }}> Playwright</Text>
+                  to ensure efficient development workflows and reliable
+                  deployments.
+                </p>
+              </AboutText>
+              <AboutImage>
+                <div>
+                  <div className="absolute inset-0 border-2 border-[#64FFDA] rounded-md transform translate-x-5 translate-y-5"></div>
+                  <img
+                    src="https://readdy.ai/api/search-image?query=Professional%20portrait%20of%20a%20male%20solutions%20architect%20in%20business%20casual%20attire%2C%20looking%20confident%20and%20approachable%20against%20a%20simple%20navy%20blue%20background%2C%20high%20quality%20professional%20headshot%20with%20soft%20lighting%2C%20modern%20tech%20professional%20appearance&width=400&height=400&seq=7&orientation=squarish"
+                    alt="Pondkarun"
+                    className="w-full h-full object-cover object-top rounded-md z-10 relative"
+                  />
+                </div>
+              </AboutImage>
+            </AboutContent>
+          </SectionContainer>
+        </Section>
+        {/* Skills Section */}
+        <Section id="skills" $bg="#112240">
+          <SectionContainer>
+            <SectionHeader>
+              <h2>
+                <span>02.</span>Skills
+              </h2>
+              <Divider style={{ flexGrow: 1, minWidth: "100px", backgroundColor: "gray" }} />
+            </SectionHeader>
+            <SkillsGrid>
+              <SkillCard>
+                <h3>Frontend Development</h3>
+                <SkillTags>
+                  {[
+                    "React",
+                    "Next.js",
+                    "TypeScript",
+                    "TailwindCSS",
+                    "GraphQL",
+                  ].map((skill) => (
+                    <Tag
+                      key={skill}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "#112240",
+                        color: "#64FFDA",
+                        border: "1px solid #64FFDA",
+                        borderRadius: "9999px",
+                        fontSize: "0.875rem"
+                      }}
+                    >
+                      {skill}
+                    </Tag>
+                  ))}
+                </SkillTags>
+              </SkillCard>
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+              <SkillCard>
+                <h3>Backend Development</h3>
+                <SkillTags>
+                  {[
+                    "Node.js",
+                    "GraphQL",
+                    "PostgreSQL",
+                    "Hasura",
+                    "Express",
+                    "MongoDB",
+                  ].map((skill) => (
+                    <Tag
+                      key={skill}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "#112240",
+                        color: "#64FFDA",
+                        border: "1px solid #64FFDA",
+                        borderRadius: "9999px",
+                        fontSize: "0.875rem"
+                      }}
+                    >
+                      {skill}
+                    </Tag>
+                  ))}
+                </SkillTags>
+              </SkillCard>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+              <SkillCard>
+                <h3>DevOps & Tools</h3>
+                <SkillTags>
+                  {[
+                    "Docker",
+                    "Jenkins",
+                    "Kubernetes",
+                    "CI/CD",
+                    "Git",
+                    "Playwright",
+                  ].map((skill) => (
+                    <Tag
+                      key={skill}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "#112240",
+                        color: "#64FFDA",
+                        border: "1px solid #64FFDA",
+                        borderRadius: "9999px",
+                        fontSize: "0.875rem"
+                      }}
+                    >
+                      {skill}
+                    </Tag>
+                  ))}
+                </SkillTags>
+              </SkillCard>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+              <SkillCard>
+                <h3>Cloud & Infrastructure</h3>
+                <SkillTags>
+                  {[
+                    "AWS EKS",
+                    "AWS Cognito",
+                    "DynamoDB",
+                    "S3",
+                    "Lambda",
+                    "CloudFront",
+                  ].map((skill) => (
+                    <Tag
+                      key={skill}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "#112240",
+                        color: "#64FFDA",
+                        border: "1px solid #64FFDA",
+                        borderRadius: "9999px",
+                        fontSize: "0.875rem"
+                      }}
+                    >
+                      {skill}
+                    </Tag>
+                  ))}
+                </SkillTags>
+              </SkillCard>
+            </SkillsGrid>
+          </SectionContainer>
+        </Section>
+        {/* Projects Section */}
+        <Section id="projects">
+          <SectionContainer>
+            <SectionHeader>
+              <h2>
+                <span>03.</span>Projects
+              </h2>
+              <Divider style={{ flexGrow: 1, minWidth: "100px", backgroundColor: "gray" }} />
+            </SectionHeader>
+            <ProjectsGrid>
+              {projects.map((project, index) => (
+                <ProjectCard key={index}>
+                  <ProjectImage>
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                    />
+                  </ProjectImage>
+                  <ProjectContent>
+                    <h3>{project.title}</h3>
+                    <p>{project.description}</p>
+                    <ProjectTags>
+                      {project.tags.map((tag) => (
+                        <Tag
+                          key={tag}
+                          style={{
+                            backgroundColor: "#0A192F",
+                            color: "#64FFDA",
+                            border: "none"
+                          }}
+                        >
+                          {tag}
+                        </Tag>
+                      ))}
+                    </ProjectTags>
+                    <ProjectButtons>
+                      <Button
+                        type="text"
+                        style={{
+                          color: "#64FFDA"
+                        }}
+                      >
+                        <i className="fas fa-external-link-alt mr-2"></i> View
+                        Project
+                      </Button>
+                      <Button
+                        type="text"
+                        style={{
+                          color: "#64FFDA"
+                        }}
+                      >
+                        <i className="fab fa-github mr-2"></i> Code
+                      </Button>
+                    </ProjectButtons>
+                  </ProjectContent>
+                </ProjectCard>
+              ))}
+            </ProjectsGrid>
+          </SectionContainer>
+        </Section>
+        {/* Tech Stack Section */}
+        <Section id="tech" $bg="#112240">
+          <SectionContainer>
+            <SectionHeader>
+              <h2>
+                <span>04.</span>Tech Stack
+              </h2>
+              <Divider style={{ flexGrow: 1, minWidth: "100px", backgroundColor: "gray" }} />
+            </SectionHeader>
+            <TechGrid>
+              {techStack.map((category) => (
+                <TechCategory key={category.category}>
+                  <h3>{category.category}</h3>
+                  <TechItems>
+                    {category.items.map((item) => (
+                      <TechItem key={item}>
+                        <i className="fas fa-check"></i>
+                        <span>{item}</span>
+                      </TechItem>
+                    ))}
+                  </TechItems>
+                </TechCategory>
+              ))}
+            </TechGrid>
+            <TechLogos>
+              {[
+                "Next.js",
+                "React",
+                "Node.js",
+                "TypeScript",
+                "GraphQL",
+                "PostgreSQL",
+                "AWS",
+                "Docker",
+              ].map((tech) => (
+                <TechLogo key={tech}>
+                  <div>
+                    <i
+                      className={`fab fa-${tech.toLowerCase().replace(".js", "").replace("type", "")}`}
+                    ></i>
+                  </div>
+                  <p>{tech}</p>
+                </TechLogo>
+              ))}
+            </TechLogos>
+          </SectionContainer>
+        </Section>
+        {/* Contact Section */}
+        <Section id="contact">
+          <SectionContainer>
+            <SectionHeader>
+              <h2>
+                <span>05.</span>Get In Touch
+              </h2>
+            </SectionHeader>
+            <ContactContent>
+              <p>
+                I&apos;m currently open to new opportunities and collaborations. Whether
+                you have a question or just want to say hi, I&apos;ll do my best to get
+                back to you!
+              </p>
+              <ContactEmail>
+                <a href="mailto:pondkarun@gmail.com">
+                  <MailOutlined /> pondkarun@gmail.com
+                </a>
+              </ContactEmail>
+              <ContactSocials>
+                <Tooltip title="GitHub">
+                  <Button
+                    type="text"
+                    shape="circle"
+                    size="large"
+                    icon={<GithubOutlined />}
+                    style={{
+                      color: "#9ca3af",
+                      fontSize: "1.5rem"
+                    }}
+                  />
+                </Tooltip>
+                <Tooltip title="LinkedIn">
+                  <Button
+                    type="text"
+                    shape="circle"
+                    size="large"
+                    icon={<LinkedinOutlined />}
+                    style={{
+                      color: "#9ca3af",
+                      fontSize: "1.5rem"
+                    }}
+                  />
+                </Tooltip>
+              </ContactSocials>
+            </ContactContent>
+          </SectionContainer>
+        </Section>
+        {/* Footer */}
+        <Footer>
+          <SectionContainer>
+            <p>
+              Designed & Built by Pondkarun © {new Date().getFullYear()}
+            </p>
+          </SectionContainer>
+        </Footer>
+        {/* Scroll to top button */}
+        {isVisible && (
+          <ScrollToTopButton onClick={scrollToTop}>
+            <ArrowUpOutlined />
+          </ScrollToTopButton>
+        )}
+      </Container>
+    </>
   );
-}
+};
+export default App;
