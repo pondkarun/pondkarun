@@ -174,19 +174,19 @@ const App: React.FC = () => {
 
   const projects = [
     {
-      title: "AI-powered KYC Verification System",
-      description:
-        "A secure identity verification platform using OCR technology and facial recognition to streamline KYC processes for financial institutions.",
-      tags: ["AI", "OCR", "Face Recognition", "Next.js", "AWS"],
+      title: "AI-powered OCR Image Extraction System",
+      description: "A high-efficiency OCR platform that uses OpenAI GPT-4o Vision to extract structured data and raw text from images. Supports cost estimation, JSON output, and token-level analytics.",
+      tags: ["OCR", "Image to Text", "GPT-4o Vision", "JSON Extraction", "Token Usage", "Next.js"],
       image:
-        "https://readdy.ai/api/search-image?query=A%20modern%20digital%20identity%20verification%20system%20interface%20with%20facial%20recognition%20and%20document%20scanning%20capabilities%2C%20showing%20a%20professional%20dashboard%20with%20security%20elements%20and%20biometric%20verification%20process%2C%20clean%20interface%20design%20with%20blue%20accents&width=600&height=400&seq=1&orientation=landscape",
+        "/image/ocr/Screenshot 2568-06-17 at 15.55.27.png",
       images: [
-        "https://readdy.ai/api/search-image?query=A%20modern%20digital%20identity%20verification%20system%20interface%20with%20facial%20recognition%20and%20document%20scanning%20capabilities%2C%20showing%20a%20professional%20dashboard%20with%20security%20elements%20and%20biometric%20verification%20process%2C%20clean%20interface%20design%20with%20blue%20accents&width=600&height=400&seq=1&orientation=landscape",
-        "https://readdy.ai/api/search-image?query=KYC%20document%20verification%20mobile%20app%20interface%20showing%20passport%20scanning%2C%20ID%20card%20validation%2C%20and%20real-time%20facial%20recognition%20process%2C%20modern%20fintech%20mobile%20design&width=600&height=400&seq=1.1&orientation=landscape",
-        "https://readdy.ai/api/search-image?query=Admin%20dashboard%20for%20KYC%20verification%20showing%20analytics%2C%20user%20verification%20status%2C%20compliance%20reports%2C%20and%20fraud%20detection%20metrics%2C%20professional%20interface&width=600&height=400&seq=1.2&orientation=landscape"
+        "/image/ocr/Screenshot 2568-06-17 at 15.55.27.png",
+        "/image/ocr/Screenshot 2568-06-17 at 15.51.33.png",
+        "/image/ocr/Screenshot 2568-06-17 at 15.55.58.png",
+        "/image/ocr/Screenshot 2568-06-17 at 15.56.15.png",
+        "/image/ocr/Screenshot 2568-06-17 at 15.56.32.png",
+        "/image/ocr/Screenshot 2568-06-17 at 15.51.22.png",
       ],
-      liveUrl: "https://kyc-demo.example.com",
-      githubUrl: "https://github.com/pondkarun/kyc-system"
     },
     {
       title: "Affiliate Payment Gateway System",
@@ -740,7 +740,7 @@ const App: React.FC = () => {
                   ))}
                 </Swiper>
               </CarouselContainer>
-              
+
               <ProjectInfo>
                 <h3>{selectedProject.title}</h3>
                 <p>{selectedProject.description}</p>
