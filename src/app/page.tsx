@@ -9,9 +9,6 @@ import {
   GithubOutlined,
   LinkedinOutlined,
   ArrowUpOutlined,
-  CloseOutlined,
-  LeftOutlined,
-  RightOutlined,
 } from "@ant-design/icons";
 import * as echarts from "echarts";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -189,64 +186,20 @@ const App: React.FC = () => {
       ],
     },
     {
-      title: "Affiliate Payment Gateway System",
-      description:
-        "A comprehensive payment processing platform for affiliate marketing networks with real-time tracking and automated commission calculations.",
-      tags: ["Payment Gateway", "Node.js", "PostgreSQL", "GraphQL", "Docker"],
-      image:
-        "https://readdy.ai/api/search-image?query=A%20sleek%20payment%20gateway%20dashboard%20showing%20transaction%20analytics%2C%20payment%20processing%20interface%2C%20and%20affiliate%20tracking%20metrics%20with%20financial%20data%20visualization%2C%20professional%20fintech%20interface%20with%20secure%20payment%20icons%20and%20charts&width=600&height=400&seq=2&orientation=landscape",
-      images: [
-        "https://readdy.ai/api/search-image?query=A%20sleek%20payment%20gateway%20dashboard%20showing%20transaction%20analytics%2C%20payment%20processing%20interface%2C%20and%20affiliate%20tracking%20metrics%20with%20financial%20data%20visualization%2C%20professional%20fintech%20interface%20with%20secure%20payment%20icons%20and%20charts&width=600&height=400&seq=2&orientation=landscape",
-        "https://readdy.ai/api/search-image?query=Affiliate%20commission%20tracking%20interface%20showing%20earnings%2C%20payment%20history%2C%20referral%20statistics%2C%20and%20payout%20schedules%2C%20modern%20financial%20dashboard&width=600&height=400&seq=2.1&orientation=landscape",
-        "https://readdy.ai/api/search-image?query=Payment%20processing%20API%20documentation%20and%20integration%20guide%20interface%20showing%20code%20examples%2C%20webhooks%2C%20and%20API%20endpoints%2C%20developer%20portal&width=600&height=400&seq=2.2&orientation=landscape"
-      ],
-      liveUrl: "https://payment-gateway-demo.example.com",
-      githubUrl: "https://github.com/pondkarun/payment-gateway"
-    },
-    {
-      title: "AI-assisted Wedding Card Generator",
-      description:
-        "An innovative platform that leverages AI to generate personalized wedding invitations based on user preferences and design inputs.",
-      tags: ["AI", "Next.js", "TailwindCSS", "AWS Lambda", "GraphQL"],
-      image:
-        "https://readdy.ai/api/search-image?query=An%20elegant%20wedding%20invitation%20design%20tool%20showing%20customizable%20templates%2C%20AI%20recommendation%20system%2C%20and%20preview%20of%20beautiful%20wedding%20cards%20with%20floral%20patterns%2C%20professional%20design%20interface%20with%20typography%20options%20and%20color%20schemes&width=600&height=400&seq=3&orientation=landscape",
-      images: [
-        "https://readdy.ai/api/search-image?query=An%20elegant%20wedding%20invitation%20design%20tool%20showing%20customizable%20templates%2C%20AI%20recommendation%20system%2C%20and%20preview%20of%20beautiful%20wedding%20cards%20with%20floral%20patterns%2C%20professional%20design%20interface%20with%20typography%20options%20and%20color%20schemes&width=600&height=400&seq=3&orientation=landscape",
-        "https://readdy.ai/api/search-image?query=Wedding%20invitation%20AI%20generation%20process%20showing%20style%20selection%2C%20color%20palette%20customization%2C%20and%20text%20formatting%20options%2C%20creative%20design%20studio%20interface&width=600&height=400&seq=3.1&orientation=landscape",
-        "https://readdy.ai/api/search-image?query=Gallery%20of%20AI-generated%20wedding%20invitations%20showing%20various%20themes%20like%20vintage%2C%20modern%2C%20floral%2C%20and%20minimalist%20designs%2C%20elegant%20showcase&width=600&height=400&seq=3.2&orientation=landscape"
-      ],
-      liveUrl: "https://wedding-cards-ai.example.com",
-      githubUrl: "https://github.com/pondkarun/wedding-card-generator"
-    },
-    {
-      title: "HS Code Classification Tool",
-      description:
-        "An AI-powered solution for automating the classification of products into Harmonized System codes using Elasticsearch and machine learning algorithms.",
-      tags: ["AI", "Elasticsearch", "Node.js", "Machine Learning", "Docker"],
-      image:
-        "https://readdy.ai/api/search-image?query=A%20professional%20product%20classification%20interface%20showing%20AI-powered%20categorization%20system%20with%20search%20functionality%2C%20taxonomy%20hierarchy%2C%20and%20product%20code%20assignment%2C%20technical%20dashboard%20with%20data%20processing%20visualization%20and%20search%20results&width=600&height=400&seq=4&orientation=landscape",
-      images: [
-        "https://readdy.ai/api/search-image?query=A%20professional%20product%20classification%20interface%20showing%20AI-powered%20categorization%20system%20with%20search%20functionality%2C%20taxonomy%20hierarchy%2C%20and%20product%20code%20assignment%2C%20technical%20dashboard%20with%20data%20processing%20visualization%20and%20search%20results&width=600&height=400&seq=4&orientation=landscape",
-        "https://readdy.ai/api/search-image?query=HS%20Code%20search%20and%20classification%20results%20showing%20product%20matching%2C%20confidence%20scores%2C%20and%20detailed%20code%20descriptions%2C%20data%20analytics%20interface&width=600&height=400&seq=4.1&orientation=landscape",
-        "https://readdy.ai/api/search-image?query=Machine%20learning%20model%20training%20dashboard%20for%20HS%20code%20classification%20showing%20accuracy%20metrics%2C%20training%20progress%2C%20and%20model%20performance%20analytics&width=600&height=400&seq=4.2&orientation=landscape"
-      ],
-      liveUrl: "https://hs-code-classifier.example.com",
-      githubUrl: "https://github.com/pondkarun/hs-code-tool"
-    },
-    {
       title: "Chootday - Online Dress Rental Platform",
       description:
         "A modern e-commerce platform for dress rentals featuring inventory management, booking system, and secure payment processing.",
       tags: ["E-commerce", "Next.js", "PostgreSQL", "AWS", "Hasura"],
       image:
-        "https://readdy.ai/api/search-image?query=A%20stylish%20online%20dress%20rental%20platform%20showing%20elegant%20dresses%20on%20models%2C%20booking%20calendar%20interface%2C%20and%20fashion%20category%20filters%2C%20modern%20e-commerce%20design%20with%20product%20gallery%20and%20rental%20options%2C%20clean%20layout%20with%20fashion%20photography&width=600&height=400&seq=5&orientation=landscape",
+        "/image/chootday/Screenshot 2568-06-16 at 10.44.54.png",
       images: [
-        "https://readdy.ai/api/search-image?query=A%20stylish%20online%20dress%20rental%20platform%20showing%20elegant%20dresses%20on%20models%2C%20booking%20calendar%20interface%2C%20and%20fashion%20category%20filters%2C%20modern%20e-commerce%20design%20with%20product%20gallery%20and%20rental%20options%2C%20clean%20layout%20with%20fashion%20photography&width=600&height=400&seq=5&orientation=landscape",
-        "https://readdy.ai/api/search-image?query=Dress%20rental%20booking%20interface%20showing%20calendar%20availability%2C%20size%20selection%2C%20rental%20duration%2C%20and%20pricing%20calculator%2C%20user-friendly%20e-commerce%20checkout&width=600&height=400&seq=5.1&orientation=landscape",
-        "https://readdy.ai/api/search-image?query=Fashion%20inventory%20management%20dashboard%20showing%20dress%20availability%2C%20rental%20status%2C%20maintenance%20schedules%2C%20and%20analytics%2C%20business%20management%20interface&width=600&height=400&seq=5.2&orientation=landscape"
+        "/image/chootday/Screenshot 2568-06-16 at 10.44.54.png",
+        "/image/chootday/Screenshot 2568-06-16 at 10.45.04.png",
+        "/image/chootday/Screenshot 2568-06-16 at 10.45.21.png",
+        "/image/chootday/Screenshot 2568-06-16 at 10.46.05.png",
+        "/image/chootday/Screenshot 2568-06-16 at 10.46.15.png",
+        "/image/chootday/Screenshot 2568-06-16 at 10.46.22.png",
       ],
-      liveUrl: "https://chootday.com",
-      githubUrl: "https://github.com/pondkarun/chootday-platform"
     },
   ];
   const techStack = [
