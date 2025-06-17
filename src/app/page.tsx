@@ -3,15 +3,792 @@
 // The exported code uses styled-components instead of Tailwind CSS
 import React, { useState, useEffect, useRef } from "react";
 import styled, { keyframes, createGlobalStyle } from "styled-components";
-import { Typography, Button, Divider, Tag, Tooltip } from "antd";
+import { Typography, Button, Divider, Tag, Tooltip, Image, Modal } from "antd";
 import {
   MailOutlined,
   GithubOutlined,
   LinkedinOutlined,
   ArrowUpOutlined,
+  CloseOutlined,
+  LeftOutlined,
+  RightOutlined,
 } from "@ant-design/icons";
 import * as echarts from "echarts";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 const { Text } = Typography;
+
+const App: React.FC = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCarouselOpen, setIsCarouselOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const chartRef = useRef<HTMLDivElement>(null);
+  const sections = ["home", "about", "skills", "projects", "tech", "contact"];
+  // Typewriter effect for hero section
+  const [displayText, setDisplayText] = useState("");
+  const fullText = "Building innovative solutions with modern technologies";
+  const [currentIndex, setCurrentIndex] = useState(0);
+  useEffect(() => {
+    if (currentIndex < fullText.length) {
+      const timeout = setTimeout(() => {
+        setDisplayText((prev) => prev + fullText[currentIndex]);
+        setCurrentIndex(currentIndex + 1);
+      }, 100);
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, fullText]);
+  // Scroll to top button visibility
+  useEffect(() => {
+    const toggleVisibility = () => {
+      if (window.pageYOffset > 300) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+    window.addEventListener("scroll", toggleVisibility);
+    return () => window.removeEventListener("scroll", toggleVisibility);
+  }, []);
+  // Active section detection
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      sections.forEach((section) => {
+        const element = document.getElementById(section);
+        if (element) {
+          const offsetTop = element.offsetTop - 100;
+          const offsetBottom = offsetTop + element.offsetHeight;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
+            setActiveSection(section);
+          }
+        }
+      });
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Initialize chart
+  useEffect(() => {
+    if (chartRef.current) {
+      const chart = echarts.init(chartRef.current);
+      const option = {
+        animation: false,
+        radar: {
+          indicator: [
+            { name: "Frontend", max: 100 },
+            { name: "Backend", max: 100 },
+            { name: "DevOps", max: 100 },
+            { name: "Cloud", max: 100 },
+            { name: "Architecture", max: 100 },
+            { name: "AI/ML", max: 100 },
+          ],
+          radius: 130,
+          splitNumber: 4,
+          axisName: {
+            color: "#64FFDA",
+            fontSize: 14,
+          },
+          splitLine: {
+            lineStyle: {
+              color: "rgba(100, 255, 218, 0.2)",
+            },
+          },
+          splitArea: {
+            show: false,
+          },
+          axisLine: {
+            lineStyle: {
+              color: "rgba(100, 255, 218, 0.3)",
+            },
+          },
+        },
+        series: [
+          {
+            name: "Skills",
+            type: "radar",
+            data: [
+              {
+                value: [90, 95, 85, 92, 88, 80],
+                name: "Skill Level",
+                areaStyle: {
+                  color: "rgba(100, 255, 218, 0.2)",
+                },
+                lineStyle: {
+                  color: "#64FFDA",
+                  width: 2,
+                },
+                itemStyle: {
+                  color: "#64FFDA",
+                },
+              },
+            ],
+          },
+        ],
+      };
+      chart.setOption(option);
+      const handleResize = () => {
+        chart.resize();
+      };
+      window.addEventListener("resize", handleResize);
+      return () => {
+        chart.dispose();
+        window.removeEventListener("resize", handleResize);
+      };
+    }
+  }, []);
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - 80,
+        behavior: "smooth",
+      });
+    }
+    setIsMenuOpen(false);
+  };
+
+  const openCarousel = (project: any, imageIndex: number = 0) => {
+    setSelectedProject(project);
+    setCurrentImageIndex(imageIndex);
+    setIsCarouselOpen(true);
+  };
+
+  const closeCarousel = () => {
+    setIsCarouselOpen(false);
+    setSelectedProject(null);
+    setCurrentImageIndex(0);
+  };
+
+  const projects = [
+    {
+      title: "AI-powered KYC Verification System",
+      description:
+        "A secure identity verification platform using OCR technology and facial recognition to streamline KYC processes for financial institutions.",
+      tags: ["AI", "OCR", "Face Recognition", "Next.js", "AWS"],
+      image:
+        "https://readdy.ai/api/search-image?query=A%20modern%20digital%20identity%20verification%20system%20interface%20with%20facial%20recognition%20and%20document%20scanning%20capabilities%2C%20showing%20a%20professional%20dashboard%20with%20security%20elements%20and%20biometric%20verification%20process%2C%20clean%20interface%20design%20with%20blue%20accents&width=600&height=400&seq=1&orientation=landscape",
+      images: [
+        "https://readdy.ai/api/search-image?query=A%20modern%20digital%20identity%20verification%20system%20interface%20with%20facial%20recognition%20and%20document%20scanning%20capabilities%2C%20showing%20a%20professional%20dashboard%20with%20security%20elements%20and%20biometric%20verification%20process%2C%20clean%20interface%20design%20with%20blue%20accents&width=600&height=400&seq=1&orientation=landscape",
+        "https://readdy.ai/api/search-image?query=KYC%20document%20verification%20mobile%20app%20interface%20showing%20passport%20scanning%2C%20ID%20card%20validation%2C%20and%20real-time%20facial%20recognition%20process%2C%20modern%20fintech%20mobile%20design&width=600&height=400&seq=1.1&orientation=landscape",
+        "https://readdy.ai/api/search-image?query=Admin%20dashboard%20for%20KYC%20verification%20showing%20analytics%2C%20user%20verification%20status%2C%20compliance%20reports%2C%20and%20fraud%20detection%20metrics%2C%20professional%20interface&width=600&height=400&seq=1.2&orientation=landscape"
+      ],
+      liveUrl: "https://kyc-demo.example.com",
+      githubUrl: "https://github.com/pondkarun/kyc-system"
+    },
+    {
+      title: "Affiliate Payment Gateway System",
+      description:
+        "A comprehensive payment processing platform for affiliate marketing networks with real-time tracking and automated commission calculations.",
+      tags: ["Payment Gateway", "Node.js", "PostgreSQL", "GraphQL", "Docker"],
+      image:
+        "https://readdy.ai/api/search-image?query=A%20sleek%20payment%20gateway%20dashboard%20showing%20transaction%20analytics%2C%20payment%20processing%20interface%2C%20and%20affiliate%20tracking%20metrics%20with%20financial%20data%20visualization%2C%20professional%20fintech%20interface%20with%20secure%20payment%20icons%20and%20charts&width=600&height=400&seq=2&orientation=landscape",
+      images: [
+        "https://readdy.ai/api/search-image?query=A%20sleek%20payment%20gateway%20dashboard%20showing%20transaction%20analytics%2C%20payment%20processing%20interface%2C%20and%20affiliate%20tracking%20metrics%20with%20financial%20data%20visualization%2C%20professional%20fintech%20interface%20with%20secure%20payment%20icons%20and%20charts&width=600&height=400&seq=2&orientation=landscape",
+        "https://readdy.ai/api/search-image?query=Affiliate%20commission%20tracking%20interface%20showing%20earnings%2C%20payment%20history%2C%20referral%20statistics%2C%20and%20payout%20schedules%2C%20modern%20financial%20dashboard&width=600&height=400&seq=2.1&orientation=landscape",
+        "https://readdy.ai/api/search-image?query=Payment%20processing%20API%20documentation%20and%20integration%20guide%20interface%20showing%20code%20examples%2C%20webhooks%2C%20and%20API%20endpoints%2C%20developer%20portal&width=600&height=400&seq=2.2&orientation=landscape"
+      ],
+      liveUrl: "https://payment-gateway-demo.example.com",
+      githubUrl: "https://github.com/pondkarun/payment-gateway"
+    },
+    {
+      title: "AI-assisted Wedding Card Generator",
+      description:
+        "An innovative platform that leverages AI to generate personalized wedding invitations based on user preferences and design inputs.",
+      tags: ["AI", "Next.js", "TailwindCSS", "AWS Lambda", "GraphQL"],
+      image:
+        "https://readdy.ai/api/search-image?query=An%20elegant%20wedding%20invitation%20design%20tool%20showing%20customizable%20templates%2C%20AI%20recommendation%20system%2C%20and%20preview%20of%20beautiful%20wedding%20cards%20with%20floral%20patterns%2C%20professional%20design%20interface%20with%20typography%20options%20and%20color%20schemes&width=600&height=400&seq=3&orientation=landscape",
+      images: [
+        "https://readdy.ai/api/search-image?query=An%20elegant%20wedding%20invitation%20design%20tool%20showing%20customizable%20templates%2C%20AI%20recommendation%20system%2C%20and%20preview%20of%20beautiful%20wedding%20cards%20with%20floral%20patterns%2C%20professional%20design%20interface%20with%20typography%20options%20and%20color%20schemes&width=600&height=400&seq=3&orientation=landscape",
+        "https://readdy.ai/api/search-image?query=Wedding%20invitation%20AI%20generation%20process%20showing%20style%20selection%2C%20color%20palette%20customization%2C%20and%20text%20formatting%20options%2C%20creative%20design%20studio%20interface&width=600&height=400&seq=3.1&orientation=landscape",
+        "https://readdy.ai/api/search-image?query=Gallery%20of%20AI-generated%20wedding%20invitations%20showing%20various%20themes%20like%20vintage%2C%20modern%2C%20floral%2C%20and%20minimalist%20designs%2C%20elegant%20showcase&width=600&height=400&seq=3.2&orientation=landscape"
+      ],
+      liveUrl: "https://wedding-cards-ai.example.com",
+      githubUrl: "https://github.com/pondkarun/wedding-card-generator"
+    },
+    {
+      title: "HS Code Classification Tool",
+      description:
+        "An AI-powered solution for automating the classification of products into Harmonized System codes using Elasticsearch and machine learning algorithms.",
+      tags: ["AI", "Elasticsearch", "Node.js", "Machine Learning", "Docker"],
+      image:
+        "https://readdy.ai/api/search-image?query=A%20professional%20product%20classification%20interface%20showing%20AI-powered%20categorization%20system%20with%20search%20functionality%2C%20taxonomy%20hierarchy%2C%20and%20product%20code%20assignment%2C%20technical%20dashboard%20with%20data%20processing%20visualization%20and%20search%20results&width=600&height=400&seq=4&orientation=landscape",
+      images: [
+        "https://readdy.ai/api/search-image?query=A%20professional%20product%20classification%20interface%20showing%20AI-powered%20categorization%20system%20with%20search%20functionality%2C%20taxonomy%20hierarchy%2C%20and%20product%20code%20assignment%2C%20technical%20dashboard%20with%20data%20processing%20visualization%20and%20search%20results&width=600&height=400&seq=4&orientation=landscape",
+        "https://readdy.ai/api/search-image?query=HS%20Code%20search%20and%20classification%20results%20showing%20product%20matching%2C%20confidence%20scores%2C%20and%20detailed%20code%20descriptions%2C%20data%20analytics%20interface&width=600&height=400&seq=4.1&orientation=landscape",
+        "https://readdy.ai/api/search-image?query=Machine%20learning%20model%20training%20dashboard%20for%20HS%20code%20classification%20showing%20accuracy%20metrics%2C%20training%20progress%2C%20and%20model%20performance%20analytics&width=600&height=400&seq=4.2&orientation=landscape"
+      ],
+      liveUrl: "https://hs-code-classifier.example.com",
+      githubUrl: "https://github.com/pondkarun/hs-code-tool"
+    },
+    {
+      title: "Chootday - Online Dress Rental Platform",
+      description:
+        "A modern e-commerce platform for dress rentals featuring inventory management, booking system, and secure payment processing.",
+      tags: ["E-commerce", "Next.js", "PostgreSQL", "AWS", "Hasura"],
+      image:
+        "https://readdy.ai/api/search-image?query=A%20stylish%20online%20dress%20rental%20platform%20showing%20elegant%20dresses%20on%20models%2C%20booking%20calendar%20interface%2C%20and%20fashion%20category%20filters%2C%20modern%20e-commerce%20design%20with%20product%20gallery%20and%20rental%20options%2C%20clean%20layout%20with%20fashion%20photography&width=600&height=400&seq=5&orientation=landscape",
+      images: [
+        "https://readdy.ai/api/search-image?query=A%20stylish%20online%20dress%20rental%20platform%20showing%20elegant%20dresses%20on%20models%2C%20booking%20calendar%20interface%2C%20and%20fashion%20category%20filters%2C%20modern%20e-commerce%20design%20with%20product%20gallery%20and%20rental%20options%2C%20clean%20layout%20with%20fashion%20photography&width=600&height=400&seq=5&orientation=landscape",
+        "https://readdy.ai/api/search-image?query=Dress%20rental%20booking%20interface%20showing%20calendar%20availability%2C%20size%20selection%2C%20rental%20duration%2C%20and%20pricing%20calculator%2C%20user-friendly%20e-commerce%20checkout&width=600&height=400&seq=5.1&orientation=landscape",
+        "https://readdy.ai/api/search-image?query=Fashion%20inventory%20management%20dashboard%20showing%20dress%20availability%2C%20rental%20status%2C%20maintenance%20schedules%2C%20and%20analytics%2C%20business%20management%20interface&width=600&height=400&seq=5.2&orientation=landscape"
+      ],
+      liveUrl: "https://chootday.com",
+      githubUrl: "https://github.com/pondkarun/chootday-platform"
+    },
+  ];
+  const techStack = [
+    {
+      category: "Frontend",
+      items: ["Next.js", "React", "TailwindCSS", "TypeScript", "GraphQL"],
+    },
+    {
+      category: "Backend",
+      items: ["Node.js", "Express", "PostgreSQL", "Hasura", "MongoDB"],
+    },
+    {
+      category: "DevOps",
+      items: ["Docker", "Jenkins", "Kubernetes", "CI/CD", "Playwright"],
+    },
+    {
+      category: "Cloud",
+      items: ["AWS EKS", "AWS Cognito", "DynamoDB", "S3", "Lambda"],
+    },
+  ];
+  return (
+    <>
+      <GlobalStyle />
+      <Container>
+        {/* Navigation */}
+        <Header>
+          <HeaderContainer>
+            <Logo>
+              P<span>.</span>
+            </Logo>
+            {/* Desktop Navigation */}
+            <Nav>
+              {sections.map((section, index) => (
+                <NavButton
+                  key={section}
+                  onClick={() => scrollToSection(section)}
+                  $isActive={activeSection === section}
+                >
+                  <span>0{index + 1}.</span>
+                  {section.charAt(0).toUpperCase() + section.slice(1)}
+                </NavButton>
+              ))}
+            </Nav>
+            {/* Mobile Navigation Toggle */}
+            <MobileMenuButton
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              <i
+                className={`fas ${isMenuOpen ? "fa-times" : "fa-bars"} text-xl`}
+              ></i>
+            </MobileMenuButton>
+          </HeaderContainer>
+          {/* Mobile Navigation Menu */}
+          {isMenuOpen && (
+            <MobileMenu>
+              <MobileMenuContainer>
+                {sections.map((section, index) => (
+                  <NavButton
+                    key={section}
+                    onClick={() => scrollToSection(section)}
+                    $isActive={activeSection === section}
+                  >
+                    <span>0{index + 1}.</span>
+                    {section.charAt(0).toUpperCase() + section.slice(1)}
+                  </NavButton>
+                ))}
+              </MobileMenuContainer>
+            </MobileMenu>
+          )}
+        </Header>
+        {/* Hero Section */}
+        <HeroSection>
+          <HeroBackground>
+            <img
+              src="https://readdy.ai/api/search-image?query=Abstract%20digital%20technology%20background%20with%20subtle%20blue%20and%20purple%20gradient%2C%20minimalist%20geometric%20patterns%20and%20soft%20glowing%20particles%2C%20perfect%20for%20a%20tech%20professional%20portfolio%20hero%20section%20with%20space%20for%20text%20on%20the%20left%20side%2C%20modern%20and%20sophisticated&width=1440&height=800&seq=6&orientation=landscape"
+              alt="Background"
+            />
+          </HeroBackground>
+          <HeroContent>
+            <div>
+              <HeroIntro>Hi, my name is</HeroIntro>
+              <HeroTitle>Karun Kalantabutra</HeroTitle>
+              <HeroSubtitle>Solutions Architect & Developer</HeroSubtitle>
+              <HeroDescription>
+                <p>
+                  {displayText}
+                  <span className="animate-pulse">|</span>
+                </p>
+              </HeroDescription>
+              <Button
+                type="primary"
+                size="large"
+                className="bg-transparent border-[#64FFDA] text-[#64FFDA] hover:bg-[#64FFDA]/10 cursor-pointer whitespace-nowrap !rounded-button"
+                onClick={() => scrollToSection("projects")}
+              >
+                View My Work
+              </Button>
+            </div>
+          </HeroContent>
+        </HeroSection>
+        {/* About Section */}
+        <Section id="about">
+          <SectionContainer>
+            <SectionHeader>
+              <h2>
+                <span>01.</span>About Me
+              </h2>
+              <Divider style={{ flexGrow: 1, minWidth: "100px", backgroundColor: "gray" }} />
+            </SectionHeader>
+            <AboutContent>
+              <AboutText>
+                <p>
+                  I&apos;m a passionate Solutions Architect and Developer with
+                  extensive experience in building
+                  <Text style={{ color: "#64FFDA" }}> Microservices</Text>,
+                  <Text style={{ color: "#64FFDA" }}> KYC systems</Text>,
+                  <Text style={{ color: "#64FFDA" }}>
+                    {" "}
+                    AI-integrated applications
+                  </Text>
+                  , and
+                  <Text style={{ color: "#64FFDA" }}> automation tools</Text>. My
+                  expertise spans across the full technology stack, allowing me to
+                  design and implement comprehensive solutions that address
+                  complex business challenges.
+                </p>
+                <p>
+                  I specialize in web and mobile development using modern
+                  technologies such as
+                  <Text style={{ color: "#64FFDA" }}> Next.js</Text>,
+                  <Text style={{ color: "#64FFDA" }}> Node.js</Text>,
+                  <Text style={{ color: "#64FFDA" }}> GraphQL</Text>,
+                  <Text style={{ color: "#64FFDA" }}> Hasura</Text>, and
+                  <Text style={{ color: "#64FFDA" }}> PostgreSQL</Text>. My cloud
+                  expertise centers around
+                  <Text style={{ color: "#64FFDA" }}> AWS</Text> services including
+                  EKS, Cognito, and DynamoDB.
+                </p>
+                <p>
+                  I&apos;m also proficient in DevOps practices, utilizing tools like
+                  <Text style={{ color: "#64FFDA" }}> Docker</Text>,
+                  <Text style={{ color: "#64FFDA" }}> Jenkins</Text>, and
+                  <Text style={{ color: "#64FFDA" }}> Playwright</Text>
+                  to ensure efficient development workflows and reliable
+                  deployments.
+                </p>
+              </AboutText>
+              <AboutImage>
+                <div>
+                  <div className="absolute inset-0 border-2 border-[#64FFDA] rounded-md transform translate-x-5 translate-y-5"></div>
+                  <Image
+                    preview={false}
+                    src="/Image/karun kalantabutra.jpg"
+                    alt="Karun Kalantabutra"
+                    className="w-full h-full object-cover object-top rounded-md z-10 relative"
+                  />
+                </div>
+              </AboutImage>
+            </AboutContent>
+          </SectionContainer>
+        </Section>
+        {/* Skills Section */}
+        <Section id="skills" $bg="#112240">
+          <SectionContainer>
+            <SectionHeader>
+              <h2>
+                <span>02.</span>Skills
+              </h2>
+              <Divider style={{ flexGrow: 1, minWidth: "100px", backgroundColor: "gray" }} />
+            </SectionHeader>
+            <SkillsGrid>
+              <SkillCard>
+                <h3>Frontend Development</h3>
+                <SkillTags>
+                  {[
+                    "React",
+                    "Next.js",
+                    "TypeScript",
+                    "TailwindCSS",
+                    "GraphQL",
+                  ].map((skill) => (
+                    <Tag
+                      key={skill}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "#112240",
+                        color: "#64FFDA",
+                        border: "1px solid #64FFDA",
+                        borderRadius: "9999px",
+                        fontSize: "0.875rem"
+                      }}
+                    >
+                      {skill}
+                    </Tag>
+                  ))}
+                </SkillTags>
+              </SkillCard>
+
+              <SkillCard>
+                <h3>Backend Development</h3>
+                <SkillTags>
+                  {[
+                    "Node.js",
+                    "GraphQL",
+                    "PostgreSQL",
+                    "Hasura",
+                    "Express",
+                    "MongoDB",
+                  ].map((skill) => (
+                    <Tag
+                      key={skill}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "#112240",
+                        color: "#64FFDA",
+                        border: "1px solid #64FFDA",
+                        borderRadius: "9999px",
+                        fontSize: "0.875rem"
+                      }}
+                    >
+                      {skill}
+                    </Tag>
+                  ))}
+                </SkillTags>
+              </SkillCard>
+
+              <SkillCard>
+                <h3>DevOps & Tools</h3>
+                <SkillTags>
+                  {[
+                    "Docker",
+                    "Jenkins",
+                    "Kubernetes",
+                    "CI/CD",
+                    "Git",
+                    "Playwright",
+                  ].map((skill) => (
+                    <Tag
+                      key={skill}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "#112240",
+                        color: "#64FFDA",
+                        border: "1px solid #64FFDA",
+                        borderRadius: "9999px",
+                        fontSize: "0.875rem"
+                      }}
+                    >
+                      {skill}
+                    </Tag>
+                  ))}
+                </SkillTags>
+              </SkillCard>
+
+              <SkillCard>
+                <h3>Cloud & Infrastructure</h3>
+                <SkillTags>
+                  {[
+                    "AWS EKS",
+                    "AWS Cognito",
+                    "DynamoDB",
+                    "S3",
+                    "Lambda",
+                    "CloudFront",
+                  ].map((skill) => (
+                    <Tag
+                      key={skill}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "#112240",
+                        color: "#64FFDA",
+                        border: "1px solid #64FFDA",
+                        borderRadius: "9999px",
+                        fontSize: "0.875rem"
+                      }}
+                    >
+                      {skill}
+                    </Tag>
+                  ))}
+                </SkillTags>
+              </SkillCard>
+            </SkillsGrid>
+          </SectionContainer>
+        </Section>
+        {/* Projects Section */}
+        <Section id="projects">
+          <SectionContainer>
+            <SectionHeader>
+              <h2>
+                <span>03.</span>Projects
+              </h2>
+              <Divider style={{ flexGrow: 1, minWidth: "100px", backgroundColor: "gray" }} />
+            </SectionHeader>
+            <ProjectsGrid>
+              {projects.map((project, index) => (
+                <ProjectCard key={index}>
+                  <ProjectImage onClick={() => openCarousel(project, 0)}>
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                    />
+                    <ProjectImageOverlay>
+                      <i className="fas fa-search-plus"></i>
+                    </ProjectImageOverlay>
+                  </ProjectImage>
+                  <ProjectContent>
+                    <h3>{project.title}</h3>
+                    <p>{project.description}</p>
+                    <ProjectTags>
+                      {project.tags.map((tag) => (
+                        <Tag
+                          key={tag}
+                          style={{
+                            backgroundColor: "#0A192F",
+                            color: "#64FFDA",
+                            border: "none"
+                          }}
+                        >
+                          {tag}
+                        </Tag>
+                      ))}
+                    </ProjectTags>
+                    <ProjectButtons>
+                      {project.liveUrl && (
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <i className="fas fa-external-link-alt"></i>
+                          Live Demo
+                        </a>
+                      )}
+                      {project.githubUrl && (
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <i className="fab fa-github"></i>
+                          Code
+                        </a>
+                      )}
+                    </ProjectButtons>
+                  </ProjectContent>
+                </ProjectCard>
+              ))}
+            </ProjectsGrid>
+          </SectionContainer>
+        </Section>
+        {/* Tech Stack Section */}
+        <Section id="tech" $bg="#112240">
+          <SectionContainer>
+            <SectionHeader>
+              <h2>
+                <span>04.</span>Tech Stack
+              </h2>
+              <Divider style={{ flexGrow: 1, minWidth: "100px", backgroundColor: "gray" }} />
+            </SectionHeader>
+            <TechGrid>
+              {techStack.map((category) => (
+                <TechCategory key={category.category}>
+                  <h3>{category.category}</h3>
+                  <TechItems>
+                    {category.items.map((item) => (
+                      <TechItem key={item}>
+                        <i className="fas fa-check"></i>
+                        <span>{item}</span>
+                      </TechItem>
+                    ))}
+                  </TechItems>
+                </TechCategory>
+              ))}
+            </TechGrid>
+            <TechLogos>
+              {[
+                "Next.js",
+                "React",
+                "Node.js",
+                "TypeScript",
+                "GraphQL",
+                "PostgreSQL",
+                "AWS",
+                "Docker",
+              ].map((tech) => (
+                <TechLogo key={tech}>
+                  <div>
+                    <i
+                      className={`fab fa-${tech.toLowerCase().replace(".js", "").replace("type", "")}`}
+                    ></i>
+                  </div>
+                  <p>{tech}</p>
+                </TechLogo>
+              ))}
+            </TechLogos>
+          </SectionContainer>
+        </Section>
+        {/* Contact Section */}
+        <Section id="contact">
+          <SectionContainer>
+            <SectionHeader>
+              <h2>
+                <span>05.</span>Get In Touch
+              </h2>
+            </SectionHeader>
+            <ContactContent>
+              <p>
+                I&apos;m currently open to new opportunities and collaborations. Whether
+                you have a question or just want to say hi, I&apos;ll do my best to get
+                back to you!
+              </p>
+              <ContactEmail>
+                <a href="mailto:pondkarun@gmail.com">
+                  <MailOutlined /> pondkarun@gmail.com
+                </a>
+              </ContactEmail>
+              <ContactSocials>
+                <Tooltip title="GitHub">
+                  <Button
+                    type="text"
+                    shape="circle"
+                    size="large"
+                    icon={<GithubOutlined />}
+                    style={{
+                      color: "#9ca3af",
+                      fontSize: "1.5rem"
+                    }}
+                  />
+                </Tooltip>
+                <Tooltip title="LinkedIn">
+                  <Button
+                    type="text"
+                    shape="circle"
+                    size="large"
+                    icon={<LinkedinOutlined />}
+                    style={{
+                      color: "#9ca3af",
+                      fontSize: "1.5rem"
+                    }}
+                  />
+                </Tooltip>
+              </ContactSocials>
+            </ContactContent>
+          </SectionContainer>
+        </Section>
+        {/* Footer */}
+        <Footer>
+          <SectionContainer>
+            <p>
+              Designed & Built by Pondkarun © {new Date().getFullYear()}
+            </p>
+          </SectionContainer>
+        </Footer>
+        {/* Scroll to top button */}
+        {isVisible && (
+          <ScrollToTopButton onClick={scrollToTop}>
+            <ArrowUpOutlined />
+          </ScrollToTopButton>
+        )}
+
+        {/* Carousel Modal */}
+        <CarouselModal
+          title={selectedProject?.title}
+          open={isCarouselOpen}
+          onCancel={closeCarousel}
+          footer={null}
+          width="90%"
+          style={{ maxWidth: '1200px' }}
+          centered
+        >
+          {selectedProject && (
+            <>
+              <CarouselContainer>
+                <Swiper
+                  modules={[Navigation, Pagination, Autoplay]}
+                  spaceBetween={30}
+                  slidesPerView={1}
+                  navigation
+                  pagination={{ clickable: true }}
+                  initialSlide={currentImageIndex}
+                  onSlideChange={(swiper) => setCurrentImageIndex(swiper.activeIndex)}
+                >
+                  {selectedProject.images?.map((image: string, index: number) => (
+                    <SwiperSlide key={index}>
+                      <img
+                        src={image}
+                        alt={`${selectedProject.title} - Screenshot ${index + 1}`}
+                        loading="lazy"
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </CarouselContainer>
+              
+              <ProjectInfo>
+                <h3>{selectedProject.title}</h3>
+                <p>{selectedProject.description}</p>
+                <ProjectTags>
+                  {selectedProject.tags?.map((tag: string) => (
+                    <Tag
+                      key={tag}
+                      style={{
+                        backgroundColor: "#0A192F",
+                        color: "#64FFDA",
+                        border: "1px solid #64FFDA",
+                        borderRadius: "4px"
+                      }}
+                    >
+                      {tag}
+                    </Tag>
+                  ))}
+                </ProjectTags>
+                <ProjectLinks>
+                  {selectedProject.liveUrl && (
+                    <a
+                      href={selectedProject.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <i className="fas fa-external-link-alt"></i>
+                      View Live Demo
+                    </a>
+                  )}
+                  {selectedProject.githubUrl && (
+                    <a
+                      href={selectedProject.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <i className="fab fa-github"></i>
+                      View Source Code
+                    </a>
+                  )}
+                </ProjectLinks>
+              </ProjectInfo>
+            </>
+          )}
+        </CarouselModal>
+      </Container>
+    </>
+  );
+};
 
 // Global Styles
 const GlobalStyle = createGlobalStyle`
@@ -377,6 +1154,7 @@ const ProjectImage = styled.div`
   position: relative;
   height: 14rem;
   overflow: hidden;
+  cursor: pointer;
   
   img {
     width: 100%;
@@ -580,666 +1358,156 @@ const ScrollToTopButton = styled.button`
   }
 `;
 
+// Carousel Modal Styles
+const CarouselModal = styled(Modal)`
+  .ant-modal-content {
+    background-color: #0A192F;
+    border: 1px solid rgba(100, 255, 218, 0.2);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .ant-modal-body {
+    padding: 0;
+  }
+  
+  .ant-modal-header {
+    background-color: #112240;
+    border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+    padding: 1rem 1.5rem;
+  }
+  
+  .ant-modal-title {
+    color: #64FFDA;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .ant-modal-close {
+    color: #64FFDA;
+  }
+`;
 
-
-const App: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const chartRef = useRef<HTMLDivElement>(null);
-  const sections = ["home", "about", "skills", "projects", "tech", "contact"];
-  // Typewriter effect for hero section
-  const [displayText, setDisplayText] = useState("");
-  const fullText = "Building innovative solutions with modern technologies";
-  const [currentIndex, setCurrentIndex] = useState(0);
-  useEffect(() => {
-    if (currentIndex < fullText.length) {
-      const timeout = setTimeout(() => {
-        setDisplayText((prev) => prev + fullText[currentIndex]);
-        setCurrentIndex(currentIndex + 1);
-      }, 100);
-      return () => clearTimeout(timeout);
+const CarouselContainer = styled.div`
+  position: relative;
+  max-height: 70vh;
+  
+  .swiper {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    img {
+      width: 100%;
+      height: auto;
+      max-height: 60vh;
+      object-fit: contain;
+      border-radius: 8px;
     }
-  }, [currentIndex, fullText]);
-  // Scroll to top button visibility
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.pageYOffset > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-    window.addEventListener("scroll", toggleVisibility);
-    return () => window.removeEventListener("scroll", toggleVisibility);
-  }, []);
-  // Active section detection
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      sections.forEach((section) => {
-        const element = document.getElementById(section);
-        if (element) {
-          const offsetTop = element.offsetTop - 100;
-          const offsetBottom = offsetTop + element.offsetHeight;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
-            setActiveSection(section);
-          }
-        }
-      });
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-  // Initialize chart
-  useEffect(() => {
-    if (chartRef.current) {
-      const chart = echarts.init(chartRef.current);
-      const option = {
-        animation: false,
-        radar: {
-          indicator: [
-            { name: "Frontend", max: 100 },
-            { name: "Backend", max: 100 },
-            { name: "DevOps", max: 100 },
-            { name: "Cloud", max: 100 },
-            { name: "Architecture", max: 100 },
-            { name: "AI/ML", max: 100 },
-          ],
-          radius: 130,
-          splitNumber: 4,
-          axisName: {
-            color: "#64FFDA",
-            fontSize: 14,
-          },
-          splitLine: {
-            lineStyle: {
-              color: "rgba(100, 255, 218, 0.2)",
-            },
-          },
-          splitArea: {
-            show: false,
-          },
-          axisLine: {
-            lineStyle: {
-              color: "rgba(100, 255, 218, 0.3)",
-            },
-          },
-        },
-        series: [
-          {
-            name: "Skills",
-            type: "radar",
-            data: [
-              {
-                value: [90, 95, 85, 92, 88, 80],
-                name: "Skill Level",
-                areaStyle: {
-                  color: "rgba(100, 255, 218, 0.2)",
-                },
-                lineStyle: {
-                  color: "#64FFDA",
-                  width: 2,
-                },
-                itemStyle: {
-                  color: "#64FFDA",
-                },
-              },
-            ],
-          },
-        ],
-      };
-      chart.setOption(option);
-      const handleResize = () => {
-        chart.resize();
-      };
-      window.addEventListener("resize", handleResize);
-      return () => {
-        chart.dispose();
-        window.removeEventListener("resize", handleResize);
-      };
+  }
+  
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: #64FFDA !important;
+    background-color: rgba(10, 25, 47, 0.8);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    
+    &:after {
+      font-size: 16px;
     }
-  }, []);
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      window.scrollTo({
-        top: element.offsetTop - 80,
-        behavior: "smooth",
-      });
+    
+    &:hover {
+      background-color: rgba(100, 255, 218, 0.1);
     }
-    setIsMenuOpen(false);
-  };
-  const skills = {
-    frontend: [
-      { name: "Next.js", level: 95 },
-      { name: "React", level: 95 },
-      { name: "TailwindCSS", level: 90 },
-      { name: "TypeScript", level: 85 },
-      { name: "GraphQL", level: 85 },
-    ],
-    backend: [
-      { name: "Node.js", level: 95 },
-      { name: "PostgreSQL", level: 90 },
-      { name: "Hasura", level: 90 },
-      { name: "Express", level: 85 },
-      { name: "MongoDB", level: 80 },
-    ],
-    devops: [
-      { name: "Docker", level: 90 },
-      { name: "Jenkins", level: 85 },
-      { name: "Kubernetes", level: 85 },
-      { name: "CI/CD", level: 85 },
-      { name: "Playwright", level: 80 },
-    ],
-    cloud: [
-      { name: "AWS EKS", level: 90 },
-      { name: "AWS Cognito", level: 90 },
-      { name: "DynamoDB", level: 85 },
-      { name: "S3", level: 90 },
-      { name: "Lambda", level: 85 },
-    ],
-  };
-  const projects = [
-    {
-      title: "AI-powered KYC Verification System",
-      description:
-        "A secure identity verification platform using OCR technology and facial recognition to streamline KYC processes for financial institutions.",
-      tags: ["AI", "OCR", "Face Recognition", "Next.js", "AWS"],
-      image:
-        "https://readdy.ai/api/search-image?query=A%20modern%20digital%20identity%20verification%20system%20interface%20with%20facial%20recognition%20and%20document%20scanning%20capabilities%2C%20showing%20a%20professional%20dashboard%20with%20security%20elements%20and%20biometric%20verification%20process%2C%20clean%20interface%20design%20with%20blue%20accents&width=600&height=400&seq=1&orientation=landscape",
-    },
-    {
-      title: "Affiliate Payment Gateway System",
-      description:
-        "A comprehensive payment processing platform for affiliate marketing networks with real-time tracking and automated commission calculations.",
-      tags: ["Payment Gateway", "Node.js", "PostgreSQL", "GraphQL", "Docker"],
-      image:
-        "https://readdy.ai/api/search-image?query=A%20sleek%20payment%20gateway%20dashboard%20showing%20transaction%20analytics%2C%20payment%20processing%20interface%2C%20and%20affiliate%20tracking%20metrics%20with%20financial%20data%20visualization%2C%20professional%20fintech%20interface%20with%20secure%20payment%20icons%20and%20charts&width=600&height=400&seq=2&orientation=landscape",
-    },
-    {
-      title: "AI-assisted Wedding Card Generator",
-      description:
-        "An innovative platform that leverages AI to generate personalized wedding invitations based on user preferences and design inputs.",
-      tags: ["AI", "Next.js", "TailwindCSS", "AWS Lambda", "GraphQL"],
-      image:
-        "https://readdy.ai/api/search-image?query=An%20elegant%20wedding%20invitation%20design%20tool%20showing%20customizable%20templates%2C%20AI%20recommendation%20system%2C%20and%20preview%20of%20beautiful%20wedding%20cards%20with%20floral%20patterns%2C%20professional%20design%20interface%20with%20typography%20options%20and%20color%20schemes&width=600&height=400&seq=3&orientation=landscape",
-    },
-    {
-      title: "HS Code Classification Tool",
-      description:
-        "An AI-powered solution for automating the classification of products into Harmonized System codes using Elasticsearch and machine learning algorithms.",
-      tags: ["AI", "Elasticsearch", "Node.js", "Machine Learning", "Docker"],
-      image:
-        "https://readdy.ai/api/search-image?query=A%20professional%20product%20classification%20interface%20showing%20AI-powered%20categorization%20system%20with%20search%20functionality%2C%20taxonomy%20hierarchy%2C%20and%20product%20code%20assignment%2C%20technical%20dashboard%20with%20data%20processing%20visualization%20and%20search%20results&width=600&height=400&seq=4&orientation=landscape",
-    },
-    {
-      title: "Chootday - Online Dress Rental Platform",
-      description:
-        "A modern e-commerce platform for dress rentals featuring inventory management, booking system, and secure payment processing.",
-      tags: ["E-commerce", "Next.js", "PostgreSQL", "AWS", "Hasura"],
-      image:
-        "https://readdy.ai/api/search-image?query=A%20stylish%20online%20dress%20rental%20platform%20showing%20elegant%20dresses%20on%20models%2C%20booking%20calendar%20interface%2C%20and%20fashion%20category%20filters%2C%20modern%20e-commerce%20design%20with%20product%20gallery%20and%20rental%20options%2C%20clean%20layout%20with%20fashion%20photography&width=600&height=400&seq=5&orientation=landscape",
-    },
-  ];
-  const techStack = [
-    {
-      category: "Frontend",
-      items: ["Next.js", "React", "TailwindCSS", "TypeScript", "GraphQL"],
-    },
-    {
-      category: "Backend",
-      items: ["Node.js", "Express", "PostgreSQL", "Hasura", "MongoDB"],
-    },
-    {
-      category: "DevOps",
-      items: ["Docker", "Jenkins", "Kubernetes", "CI/CD", "Playwright"],
-    },
-    {
-      category: "Cloud",
-      items: ["AWS EKS", "AWS Cognito", "DynamoDB", "S3", "Lambda"],
-    },
-  ];
-  return (
-    <>
-      <GlobalStyle />
-      <Container>
-        {/* Navigation */}
-        <Header>
-          <HeaderContainer>
-            <Logo>
-              P<span>.</span>
-            </Logo>
-            {/* Desktop Navigation */}
-            <Nav>
-              {sections.map((section, index) => (
-                <NavButton
-                  key={section}
-                  onClick={() => scrollToSection(section)}
-                  $isActive={activeSection === section}
-                >
-                  <span>0{index + 1}.</span>
-                  {section.charAt(0).toUpperCase() + section.slice(1)}
-                </NavButton>
-              ))}
-            </Nav>
-            {/* Mobile Navigation Toggle */}
-            <MobileMenuButton
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <i
-                className={`fas ${isMenuOpen ? "fa-times" : "fa-bars"} text-xl`}
-              ></i>
-            </MobileMenuButton>
-          </HeaderContainer>
-          {/* Mobile Navigation Menu */}
-          {isMenuOpen && (
-            <MobileMenu>
-              <MobileMenuContainer>
-                {sections.map((section, index) => (
-                  <NavButton
-                    key={section}
-                    onClick={() => scrollToSection(section)}
-                    $isActive={activeSection === section}
-                  >
-                    <span>0{index + 1}.</span>
-                    {section.charAt(0).toUpperCase() + section.slice(1)}
-                  </NavButton>
-                ))}
-              </MobileMenuContainer>
-            </MobileMenu>
-          )}
-        </Header>
-        {/* Hero Section */}
-        <HeroSection>
-          <HeroBackground>
-            <img
-              src="https://readdy.ai/api/search-image?query=Abstract%20digital%20technology%20background%20with%20subtle%20blue%20and%20purple%20gradient%2C%20minimalist%20geometric%20patterns%20and%20soft%20glowing%20particles%2C%20perfect%20for%20a%20tech%20professional%20portfolio%20hero%20section%20with%20space%20for%20text%20on%20the%20left%20side%2C%20modern%20and%20sophisticated&width=1440&height=800&seq=6&orientation=landscape"
-              alt="Background"
-            />
-          </HeroBackground>
-          <HeroContent>
-            <div>
-              <HeroIntro>Hi, my name is</HeroIntro>
-              <HeroTitle>Pondkarun.</HeroTitle>
-              <HeroSubtitle>Solutions Architect & Developer</HeroSubtitle>
-              <HeroDescription>
-                <p>
-                  {displayText}
-                  <span className="animate-pulse">|</span>
-                </p>
-              </HeroDescription>
-              <Button
-                type="primary"
-                size="large"
-                className="bg-transparent border-[#64FFDA] text-[#64FFDA] hover:bg-[#64FFDA]/10 cursor-pointer whitespace-nowrap !rounded-button"
-                onClick={() => scrollToSection("projects")}
-              >
-                View My Work
-              </Button>
-            </div>
-          </HeroContent>
-        </HeroSection>
-        {/* About Section */}
-        <Section id="about">
-          <SectionContainer>
-            <SectionHeader>
-              <h2>
-                <span>01.</span>About Me
-              </h2>
-              <Divider style={{ flexGrow: 1, minWidth: "100px", backgroundColor: "gray" }} />
-            </SectionHeader>
-            <AboutContent>
-              <AboutText>
-                <p>
-                  I&apos;m a passionate Solutions Architect and Developer with
-                  extensive experience in building
-                  <Text style={{ color: "#64FFDA" }}> Microservices</Text>,
-                  <Text style={{ color: "#64FFDA" }}> KYC systems</Text>,
-                  <Text style={{ color: "#64FFDA" }}>
-                    {" "}
-                    AI-integrated applications
-                  </Text>
-                  , and
-                  <Text style={{ color: "#64FFDA" }}> automation tools</Text>. My
-                  expertise spans across the full technology stack, allowing me to
-                  design and implement comprehensive solutions that address
-                  complex business challenges.
-                </p>
-                <p>
-                  I specialize in web and mobile development using modern
-                  technologies such as
-                  <Text style={{ color: "#64FFDA" }}> Next.js</Text>,
-                  <Text style={{ color: "#64FFDA" }}> Node.js</Text>,
-                  <Text style={{ color: "#64FFDA" }}> GraphQL</Text>,
-                  <Text style={{ color: "#64FFDA" }}> Hasura</Text>, and
-                  <Text style={{ color: "#64FFDA" }}> PostgreSQL</Text>. My cloud
-                  expertise centers around
-                  <Text style={{ color: "#64FFDA" }}> AWS</Text> services including
-                  EKS, Cognito, and DynamoDB.
-                </p>
-                <p>
-                  I&apos;m also proficient in DevOps practices, utilizing tools like
-                  <Text style={{ color: "#64FFDA" }}> Docker</Text>,
-                  <Text style={{ color: "#64FFDA" }}> Jenkins</Text>, and
-                  <Text style={{ color: "#64FFDA" }}> Playwright</Text>
-                  to ensure efficient development workflows and reliable
-                  deployments.
-                </p>
-              </AboutText>
-              <AboutImage>
-                <div>
-                  <div className="absolute inset-0 border-2 border-[#64FFDA] rounded-md transform translate-x-5 translate-y-5"></div>
-                  <img
-                    src="https://readdy.ai/api/search-image?query=Professional%20portrait%20of%20a%20male%20solutions%20architect%20in%20business%20casual%20attire%2C%20looking%20confident%20and%20approachable%20against%20a%20simple%20navy%20blue%20background%2C%20high%20quality%20professional%20headshot%20with%20soft%20lighting%2C%20modern%20tech%20professional%20appearance&width=400&height=400&seq=7&orientation=squarish"
-                    alt="Pondkarun"
-                    className="w-full h-full object-cover object-top rounded-md z-10 relative"
-                  />
-                </div>
-              </AboutImage>
-            </AboutContent>
-          </SectionContainer>
-        </Section>
-        {/* Skills Section */}
-        <Section id="skills" $bg="#112240">
-          <SectionContainer>
-            <SectionHeader>
-              <h2>
-                <span>02.</span>Skills
-              </h2>
-              <Divider style={{ flexGrow: 1, minWidth: "100px", backgroundColor: "gray" }} />
-            </SectionHeader>
-            <SkillsGrid>
-              <SkillCard>
-                <h3>Frontend Development</h3>
-                <SkillTags>
-                  {[
-                    "React",
-                    "Next.js",
-                    "TypeScript",
-                    "TailwindCSS",
-                    "GraphQL",
-                  ].map((skill) => (
-                    <Tag
-                      key={skill}
-                      style={{
-                        padding: "0.5rem 1rem",
-                        backgroundColor: "#112240",
-                        color: "#64FFDA",
-                        border: "1px solid #64FFDA",
-                        borderRadius: "9999px",
-                        fontSize: "0.875rem"
-                      }}
-                    >
-                      {skill}
-                    </Tag>
-                  ))}
-                </SkillTags>
-              </SkillCard>
+  }
+  
+  .swiper-pagination-bullet {
+    background-color: rgba(100, 255, 218, 0.3);
+    
+    &.swiper-pagination-bullet-active {
+      background-color: #64FFDA;
+    }
+  }
+`;
 
-              <SkillCard>
-                <h3>Backend Development</h3>
-                <SkillTags>
-                  {[
-                    "Node.js",
-                    "GraphQL",
-                    "PostgreSQL",
-                    "Hasura",
-                    "Express",
-                    "MongoDB",
-                  ].map((skill) => (
-                    <Tag
-                      key={skill}
-                      style={{
-                        padding: "0.5rem 1rem",
-                        backgroundColor: "#112240",
-                        color: "#64FFDA",
-                        border: "1px solid #64FFDA",
-                        borderRadius: "9999px",
-                        fontSize: "0.875rem"
-                      }}
-                    >
-                      {skill}
-                    </Tag>
-                  ))}
-                </SkillTags>
-              </SkillCard>
+const ProjectInfo = styled.div`
+  padding: 1.5rem;
+  background-color: #112240;
+  
+  h3 {
+    color: #f3f4f6;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    color: #9ca3af;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+`;
 
-              <SkillCard>
-                <h3>DevOps & Tools</h3>
-                <SkillTags>
-                  {[
-                    "Docker",
-                    "Jenkins",
-                    "Kubernetes",
-                    "CI/CD",
-                    "Git",
-                    "Playwright",
-                  ].map((skill) => (
-                    <Tag
-                      key={skill}
-                      style={{
-                        padding: "0.5rem 1rem",
-                        backgroundColor: "#112240",
-                        color: "#64FFDA",
-                        border: "1px solid #64FFDA",
-                        borderRadius: "9999px",
-                        fontSize: "0.875rem"
-                      }}
-                    >
-                      {skill}
-                    </Tag>
-                  ))}
-                </SkillTags>
-              </SkillCard>
+const ProjectLinks = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: transparent;
+    border: 1px solid #64FFDA;
+    color: #64FFDA;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.3s;
+    
+    &:hover {
+      background-color: rgba(100, 255, 218, 0.1);
+      color: #64FFDA;
+    }
+    
+    i {
+      font-size: 0.875rem;
+    }
+  }
+`;
 
-              <SkillCard>
-                <h3>Cloud & Infrastructure</h3>
-                <SkillTags>
-                  {[
-                    "AWS EKS",
-                    "AWS Cognito",
-                    "DynamoDB",
-                    "S3",
-                    "Lambda",
-                    "CloudFront",
-                  ].map((skill) => (
-                    <Tag
-                      key={skill}
-                      style={{
-                        padding: "0.5rem 1rem",
-                        backgroundColor: "#112240",
-                        color: "#64FFDA",
-                        border: "1px solid #64FFDA",
-                        borderRadius: "9999px",
-                        fontSize: "0.875rem"
-                      }}
-                    >
-                      {skill}
-                    </Tag>
-                  ))}
-                </SkillTags>
-              </SkillCard>
-            </SkillsGrid>
-          </SectionContainer>
-        </Section>
-        {/* Projects Section */}
-        <Section id="projects">
-          <SectionContainer>
-            <SectionHeader>
-              <h2>
-                <span>03.</span>Projects
-              </h2>
-              <Divider style={{ flexGrow: 1, minWidth: "100px", backgroundColor: "gray" }} />
-            </SectionHeader>
-            <ProjectsGrid>
-              {projects.map((project, index) => (
-                <ProjectCard key={index}>
-                  <ProjectImage>
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                    />
-                  </ProjectImage>
-                  <ProjectContent>
-                    <h3>{project.title}</h3>
-                    <p>{project.description}</p>
-                    <ProjectTags>
-                      {project.tags.map((tag) => (
-                        <Tag
-                          key={tag}
-                          style={{
-                            backgroundColor: "#0A192F",
-                            color: "#64FFDA",
-                            border: "none"
-                          }}
-                        >
-                          {tag}
-                        </Tag>
-                      ))}
-                    </ProjectTags>
-                    <ProjectButtons>
-                      <Button
-                        type="text"
-                        style={{
-                          color: "#64FFDA"
-                        }}
-                      >
-                        <i className="fas fa-external-link-alt mr-2"></i> View
-                        Project
-                      </Button>
-                      <Button
-                        type="text"
-                        style={{
-                          color: "#64FFDA"
-                        }}
-                      >
-                        <i className="fab fa-github mr-2"></i> Code
-                      </Button>
-                    </ProjectButtons>
-                  </ProjectContent>
-                </ProjectCard>
-              ))}
-            </ProjectsGrid>
-          </SectionContainer>
-        </Section>
-        {/* Tech Stack Section */}
-        <Section id="tech" $bg="#112240">
-          <SectionContainer>
-            <SectionHeader>
-              <h2>
-                <span>04.</span>Tech Stack
-              </h2>
-              <Divider style={{ flexGrow: 1, minWidth: "100px", backgroundColor: "gray" }} />
-            </SectionHeader>
-            <TechGrid>
-              {techStack.map((category) => (
-                <TechCategory key={category.category}>
-                  <h3>{category.category}</h3>
-                  <TechItems>
-                    {category.items.map((item) => (
-                      <TechItem key={item}>
-                        <i className="fas fa-check"></i>
-                        <span>{item}</span>
-                      </TechItem>
-                    ))}
-                  </TechItems>
-                </TechCategory>
-              ))}
-            </TechGrid>
-            <TechLogos>
-              {[
-                "Next.js",
-                "React",
-                "Node.js",
-                "TypeScript",
-                "GraphQL",
-                "PostgreSQL",
-                "AWS",
-                "Docker",
-              ].map((tech) => (
-                <TechLogo key={tech}>
-                  <div>
-                    <i
-                      className={`fab fa-${tech.toLowerCase().replace(".js", "").replace("type", "")}`}
-                    ></i>
-                  </div>
-                  <p>{tech}</p>
-                </TechLogo>
-              ))}
-            </TechLogos>
-          </SectionContainer>
-        </Section>
-        {/* Contact Section */}
-        <Section id="contact">
-          <SectionContainer>
-            <SectionHeader>
-              <h2>
-                <span>05.</span>Get In Touch
-              </h2>
-            </SectionHeader>
-            <ContactContent>
-              <p>
-                I&apos;m currently open to new opportunities and collaborations. Whether
-                you have a question or just want to say hi, I&apos;ll do my best to get
-                back to you!
-              </p>
-              <ContactEmail>
-                <a href="mailto:pondkarun@gmail.com">
-                  <MailOutlined /> pondkarun@gmail.com
-                </a>
-              </ContactEmail>
-              <ContactSocials>
-                <Tooltip title="GitHub">
-                  <Button
-                    type="text"
-                    shape="circle"
-                    size="large"
-                    icon={<GithubOutlined />}
-                    style={{
-                      color: "#9ca3af",
-                      fontSize: "1.5rem"
-                    }}
-                  />
-                </Tooltip>
-                <Tooltip title="LinkedIn">
-                  <Button
-                    type="text"
-                    shape="circle"
-                    size="large"
-                    icon={<LinkedinOutlined />}
-                    style={{
-                      color: "#9ca3af",
-                      fontSize: "1.5rem"
-                    }}
-                  />
-                </Tooltip>
-              </ContactSocials>
-            </ContactContent>
-          </SectionContainer>
-        </Section>
-        {/* Footer */}
-        <Footer>
-          <SectionContainer>
-            <p>
-              Designed & Built by Pondkarun © {new Date().getFullYear()}
-            </p>
-          </SectionContainer>
-        </Footer>
-        {/* Scroll to top button */}
-        {isVisible && (
-          <ScrollToTopButton onClick={scrollToTop}>
-            <ArrowUpOutlined />
-          </ScrollToTopButton>
-        )}
-      </Container>
-    </>
-  );
-};
+const ProjectImageOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.3s;
+  cursor: pointer;
+  
+  &:hover {
+    opacity: 1;
+  }
+  
+  i {
+    color: #64FFDA;
+    font-size: 2rem;
+  }
+`;
+
+
+
+
 export default App;
