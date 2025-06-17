@@ -173,7 +173,7 @@ const App: React.FC = () => {
     {
       title: "AI-powered OCR Image Extraction System",
       description: "A high-efficiency OCR platform that uses OpenAI GPT-4o Vision to extract structured data and raw text from images. Supports cost estimation, JSON output, and token-level analytics.",
-      tags: ["OCR", "Image to Text", "GPT-4o Vision", "JSON Extraction", "Token Usage", "Next.js"],
+      tags: ["OCR", "Image to Text", "OpenAI", "Next.js"],
       image:
         "/image/ocr/Screenshot 2568-06-17 at 15.55.27.png",
       images: [
@@ -184,12 +184,14 @@ const App: React.FC = () => {
         "/image/ocr/Screenshot 2568-06-17 at 15.56.32.png",
         "/image/ocr/Screenshot 2568-06-17 at 15.51.22.png",
       ],
+      liveUrl: undefined,
+      githubUrl: undefined,
     },
     {
       title: "Chootday - Online Dress Rental Platform",
       description:
         "A modern e-commerce platform for dress rentals featuring inventory management, booking system, and secure payment processing.",
-      tags: ["E-commerce", "Next.js", "PostgreSQL", "AWS", "Hasura"],
+      tags: ["Mobile App", "React Native", "PostgreSQL", "AWS", "Node.js"],
       image:
         "/image/chootday/Screenshot 2568-06-16 at 10.44.54.png",
       images: [
@@ -200,7 +202,28 @@ const App: React.FC = () => {
         "/image/chootday/Screenshot 2568-06-16 at 10.46.15.png",
         "/image/chootday/Screenshot 2568-06-16 at 10.46.22.png",
       ],
+      liveUrl: undefined,
+      githubUrl: undefined,
     },
+    {
+      title: "Daichi Mango Orchard Website",
+      description: "เว็บไซต์นำเสนอพันธุ์มะม่วงคุณภาพจากสวน Daichi Mango ทางภาคเหนือของประเทศไทย แสดงข้อมูลสินค้า เช่น น้ำหนัก ค่าความหวาน อายุการเก็บรักษา และช่วงฤดูกาลที่จำหน่าย เหมาะสำหรับผู้นำเข้า ร้านค้า และผู้บริโภค พร้อมผลิตภัณฑ์มะม่วงสด อบแห้ง และแช่แข็ง รวมถึงข้อมูลติดต่อครบถ้วน รองรับการส่งออก",
+      tags: ["Next.JS", "React", "TailwindCSS", "TypeScript", "Ant Design", "Responsive"],
+      image:
+        "/image/daichi_mango/Screenshot 2568-06-16 at 10.50.37.png",
+      images: [
+        "/image/daichi_mango/Screenshot 2568-06-16 at 10.50.37.png",
+        "/image/daichi_mango/Screenshot 2568-06-16 at 10.50.54.png",
+        "/image/daichi_mango/Screenshot 2568-06-16 at 10.51.05.png",
+        "/image/daichi_mango/Screenshot 2568-06-16 at 10.51.22.png",
+        "/image/daichi_mango/Screenshot 2568-06-16 at 10.51.32.png",
+        "/image/daichi_mango/Screenshot 2568-06-16 at 10.52.16.png",
+        "/image/daichi_mango/Screenshot 2568-06-16 at 10.52.26.png",
+      ],
+      liveUrl: undefined,
+      githubUrl: undefined,
+    },
+
   ];
   const techStack = [
     {
